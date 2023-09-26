@@ -14,7 +14,7 @@ class HomeActivity : AppCompatActivity() {
         bottomNavigationView = findViewById(R.id.bottomNavigationView)
 
         val firstFragment = HomeFragment()
-        //val secondFragment=SecondFragment()
+        val secondFragment=BirdListFragment()
         //val thirdFragment=ThirdFragment()
 
         setCurrentFragment(firstFragment)
@@ -23,7 +23,7 @@ class HomeActivity : AppCompatActivity() {
         bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_home -> setCurrentFragment(firstFragment)
-                //R.id.person -> setCurrentFragment(secondFragment)
+                R.id.nav_Birds -> setCurrentFragment(secondFragment)
                 //R.id.settings -> setCurrentFragment(thirdFragment)
             }
             true
