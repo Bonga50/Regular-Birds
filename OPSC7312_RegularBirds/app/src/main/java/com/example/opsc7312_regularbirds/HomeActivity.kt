@@ -11,7 +11,28 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
-        //Home page
-    }
+        bottomNavigationView = findViewById(R.id.bottomNavigationView)
 
+        val firstFragment = HomeFragment()
+        //val secondFragment=SecondFragment()
+        //val thirdFragment=ThirdFragment()
+
+        setCurrentFragment(firstFragment)
+
+        //Home page
+        bottomNavigationView.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_home -> setCurrentFragment(firstFragment)
+                //R.id.person -> setCurrentFragment(secondFragment)
+                //R.id.settings -> setCurrentFragment(thirdFragment)
+            }
+            true
+        }
+
+    }
+    private fun setCurrentFragment(fragment: Fragment)=
+        supportFragmentManager.beginTransaction().apply {
+            replace(R.id.flFragment,fragment)
+            commit()
+        }
 }

@@ -33,6 +33,9 @@ class MainActivity : AppCompatActivity() {
                 // the home class is yet to be created so the error will be there
                 // seeing as the home activity class has not been created yet, when logging in, it will just display
                 // failed or successful message.
+                val intent = Intent(this, HomeActivity::class.java)
+
+                startActivity(intent)
                 Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(this, "Invalid credentials", Toast.LENGTH_SHORT).show()
