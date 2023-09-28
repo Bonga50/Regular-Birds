@@ -3,4 +3,9 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="grey">#D3D3D3</color>
+    <color name="colorPrimary">#0000FF</color>
+    <color name="colorPrimaryDark">#800000</color>
+    <color name="colorAccent">#2d2b2a</color>
+
+
 </resources>
