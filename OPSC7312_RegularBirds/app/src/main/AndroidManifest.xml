@@ -15,6 +15,12 @@
         android:theme="@style/Theme.OPSC7312_RegularBirds"
         tools:targetApi="31">
         <activity
+            android:name=".BirdDetailsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".LocationInput"
+            android:exported="false" />
+        <activity
             android:name=".HomeActivity"
             android:exported="false" />
         <activity
