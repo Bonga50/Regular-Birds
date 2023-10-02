@@ -26,6 +26,8 @@ class MainActivity : AppCompatActivity() {
 
 
         loginButton.setOnClickListener {
+            val intent = Intent(this, HomeActivity::class.java)
+            startActivity(intent)
             val username = usernameEditText.text.toString()
             val password = passwordEditText.text.toString()
             // authentication performed here

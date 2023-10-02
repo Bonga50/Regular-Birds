@@ -1,35 +1,45 @@
 package com.example.opsc7312_regularbirds
 
+
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.mapbox.geojson.Point
+import com.mapbox.maps.CameraOptions
+import com.mapbox.maps.MapInitOptions
 import com.mapbox.maps.MapView
+import com.mapbox.maps.MapboxMap
 import com.mapbox.maps.Style
+import com.mapbox.maps.plugin.annotation.annotations
+import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
+import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
+import com.mapbox.maps.plugin.delegates.listeners.OnCameraChangeListener
+import com.mapbox.maps.plugin.gestures.gestures
+import com.mapbox.maps.plugin.locationcomponent.OnIndicatorBearingChangedListener
+import com.mapbox.maps.plugin.locationcomponent.OnIndicatorPositionChangedListener
+import com.mapbox.maps.plugin.locationcomponent.location
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [HomeFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class HomeFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+class HomeFragment : Fragment(){
+
     private lateinit var mapView:MapView
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+    private lateinit var mapboxMap: MapboxMap
+
+    val listener = OnCameraChangeListener { cameraChangedEventData ->
+        // Do something when the camera position changes
     }
+    // Get the user's location as coordinates
+    private val onIndicatorBearingChangedListener = OnIndicatorBearingChangedListener {
+        mapView.getMapboxMap().setCamera(CameraOptions.Builder().bearing(it).build())
+    }
+
+    private val onIndicatorPositionChangedListener = OnIndicatorPositionChangedListener {
+        mapView.getMapboxMap().setCamera(CameraOptions.Builder().center(it).build())
+        mapView.gestures.focalPoint = mapView.getMapboxMap().pixelForCoordinate(it)
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,8 +47,29 @@ class HomeFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_home, container, false)
-        mapView = view.findViewById(R.id.mapView)
-        mapView?.getMapboxMap()?.loadStyleUri(Style.MAPBOX_STREETS)
+
+        mapView = view.findViewById(R.id.mapView);
+        mapboxMap = mapView.getMapboxMap()
+
+        mapView.getMapboxMap().loadStyleUri(
+            Style.MAPBOX_STREETS,
+            // After the style is loaded, initialize the Location component.
+            object : Style.OnStyleLoaded {
+                override fun onStyleLoaded(style: Style) {
+                    mapView.location.updateSettings {
+                        enabled = true
+                        pulsingEnabled = true
+                    }
+                }
+            }
+        )
+        // Add the listener to the map
+        mapboxMap.addOnCameraChangeListener(listener)
+
+        // Pass the user's location to camera
+        mapView.location.addOnIndicatorPositionChangedListener(onIndicatorPositionChangedListener)
+        mapView.location.addOnIndicatorBearingChangedListener(onIndicatorBearingChangedListener)
+
         return view
     }
     override fun onStart() {
@@ -56,9 +87,29 @@ class HomeFragment : Fragment() {
         mapView?.onLowMemory()
     }
 
+
     override fun onDestroy() {
         super.onDestroy()
-        mapView?.onDestroy()
+        mapboxMap.removeOnCameraChangeListener(listener)
     }
 
+    fun makeMapMarker(){
+        // Create an instance of the Annotation API and get the PointAnnotationManager.
+        val annotationApi = mapView?.annotations
+        val pointAnnotationManager = annotationApi?.createPointAnnotationManager(mapView)
+        // Set options for the resulting symbol layer.
+        val pointAnnotationOptions: PointAnnotationOptions = PointAnnotationOptions()
+            // Define a geographic coordinate.
+            .withPoint(Point.fromLngLat(18.06, 59.31))
+            // Specify the bitmap you assigned to the point annotation
+            // The bitmap will be added to map style automatically.
+            .withIconImage(R.drawable.baseline_navigate_before_24.toString())
+        // Add the resulting pointAnnotation to the map.
+        pointAnnotationManager?.create(pointAnnotationOptions)
+    }
+
+
 }
+
+
+
