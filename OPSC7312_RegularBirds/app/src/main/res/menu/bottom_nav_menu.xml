@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_home"
+        android:icon="@drawable/baseline_home_24"
+        android:title="HOME" />
+    <item
+        android:id="@+id/nav_NearMe"
+        android:icon="@drawable/baseline_gps_not_fixed_24"
+        android:title="NEAR ME" />
+
+    <item
+        android:id="@+id/nav_addNew"
+        android:icon="@drawable/baseline_add_circle_outline_24"
+        android:title="Add" />
+    <item
+        android:id="@+id/nav_Birds"
+        android:icon="@drawable/bird_fill_svgrepo_com"
+        android:title="BIRDS" />
+    <item
+        android:id="@+id/nav_Settings"
+        android:icon="@drawable/baseline_settings_24"
+        android:title="SETTINGS" />
+
+</menu>
