@@ -1,11 +1,14 @@
 package com.example.opsc7312_regularbirds
 
 
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.Manifest
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapInitOptions
@@ -26,6 +29,7 @@ class HomeFragment : Fragment(){
 
     private lateinit var mapView:MapView
     private lateinit var mapboxMap: MapboxMap
+    private  val MY_PERMISSIONS_REQUEST_LOCATION = 99
 
     val listener = OnCameraChangeListener { cameraChangedEventData ->
         // Do something when the camera position changes
@@ -47,6 +51,19 @@ class HomeFragment : Fragment(){
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_home, container, false)
+
+        // Check for location permission
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // Permission is not granted, request for permission
+            requestPermissions(
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                MY_PERMISSIONS_REQUEST_LOCATION
+            )
+        }
 
         mapView = view.findViewById(R.id.mapView);
         mapboxMap = mapView.getMapboxMap()
