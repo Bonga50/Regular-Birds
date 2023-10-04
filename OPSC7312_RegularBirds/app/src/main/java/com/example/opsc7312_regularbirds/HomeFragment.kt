@@ -4,6 +4,7 @@ package com.example.opsc7312_regularbirds
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.Manifest
+import android.graphics.BitmapFactory
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -23,9 +24,21 @@ import com.mapbox.maps.plugin.gestures.gestures
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorBearingChangedListener
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorPositionChangedListener
 import com.mapbox.maps.plugin.locationcomponent.location
+import com.mapbox.maps.viewannotation.viewAnnotationOptions
 
 
 class HomeFragment : Fragment(){
+
+    val locations = listOf(
+        Locations(-122.4194, 37.7749),  // San Francisco
+        Locations(-122.4334, 37.7849),  // Western Addition
+        Locations(-122.4033, 37.7949),  // South of Market
+        Locations(-122.4234, 37.7649),  // Mission District
+        Locations(-122.4134, 37.7549),  // Bernal Heights
+        Locations(-122.4034, 37.7349),  // Excelsior
+        Locations(-122.3934, 37.7249)   // Visitacion Valley
+    )
+
 
     private lateinit var mapView:MapView
     private lateinit var mapboxMap: MapboxMap
@@ -64,7 +77,7 @@ class HomeFragment : Fragment(){
                 MY_PERMISSIONS_REQUEST_LOCATION
             )
         }
-
+        //getting the map
         mapView = view.findViewById(R.id.mapView);
         mapboxMap = mapView.getMapboxMap()
 
@@ -77,6 +90,10 @@ class HomeFragment : Fragment(){
                         enabled = true
                         pulsingEnabled = true
                     }
+                    for (i in locations){
+                        makeMapMarker(i)
+                    }
+
                 }
             }
         )
@@ -110,20 +127,25 @@ class HomeFragment : Fragment(){
         mapboxMap.removeOnCameraChangeListener(listener)
     }
 
-    fun makeMapMarker(){
+    fun makeMapMarker(locations: Locations){
         // Create an instance of the Annotation API and get the PointAnnotationManager.
         val annotationApi = mapView?.annotations
         val pointAnnotationManager = annotationApi?.createPointAnnotationManager(mapView)
+        // Convert the image resource to a Bitmap
+        val icon = BitmapFactory.decodeResource(resources, R.drawable.mapbox_marker_icon_blue)
         // Set options for the resulting symbol layer.
         val pointAnnotationOptions: PointAnnotationOptions = PointAnnotationOptions()
             // Define a geographic coordinate.
-            .withPoint(Point.fromLngLat(18.06, 59.31))
+            .withPoint(Point.fromLngLat(locations.longitude, locations.latitude))
             // Specify the bitmap you assigned to the point annotation
             // The bitmap will be added to map style automatically.
-            .withIconImage(R.drawable.baseline_navigate_before_24.toString())
+            .withIconImage(icon)
         // Add the resulting pointAnnotation to the map.
         pointAnnotationManager?.create(pointAnnotationOptions)
+
+        
     }
+
 
 
 }
