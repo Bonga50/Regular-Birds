@@ -143,7 +143,7 @@ class HomeFragment : Fragment(){
         // Add the resulting pointAnnotation to the map.
         pointAnnotationManager?.create(pointAnnotationOptions)
 
-        
+
     }
 
 
