@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AddNewObservationFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- Header Label -->
+
+        <!-- ScrollView for Fields and ImageView -->
+        <TextView
+            android:id="@+id/headerLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edit_text_3d"
+            android:backgroundTint="@color/white"
+            android:fontFamily="@font/asset"
+            android:foregroundTint="@color/design_default_color_secondary"
+            android:gravity="center"
+            android:padding="16dp"
+            android:text="ADD NEW BIRD"
+            android:textColor="@color/design_default_color_secondary"
+            android:textSize="24sp" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="603dp"
+            android:layout_below="@id/headerLabel">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- Plain Text Fields -->
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="72dp"
+                    android:background="@drawable/edit_text_outline"
+                    android:hint="NAME" />
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="61dp"
+                    android:background="@color/material_dynamic_neutral90"
+                    android:hint="COLOUR" />
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="64dp"
+                    android:hint="PATTERN"
+                    android:background="@drawable/edit_text_outline" />
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="62dp"
+                    android:background="@color/material_dynamic_neutral90"
+                    android:hint="SIZE" />
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="63dp"
+                    android:hint="SHAPE"
+                    android:background="@drawable/edit_text_outline" />
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="63dp"
+                    android:background="@color/material_dynamic_neutral90"
+                    android:hint="TAIL" />
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:background="@drawable/edit_text_outline"
+                    android:hint="SONG" />
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="65dp"
+                    android:background="@color/material_dynamic_neutral90"
+                    android:hint="HABITAT" />
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="84dp"
+                    android:hint="BEHAVIOR"
+                    android:background="@drawable/edit_text_outline" />
+
+                <!-- ImageView -->
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp"
+                    android:adjustViewBounds="true"
+                    android:background="@drawable/edit_text_outline"
+                    android:scaleType="fitCenter"></ImageView>
+                <!-- android:src="@drawable/your_image" />-->
+                <LinearLayout
+                    android:id="@+id/buttonLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_alignParentBottom="true"
+                    android:gravity="center">
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/black"
+                        android:text="CLEAR"
+                        android:textColor="@color/design_default_color_secondary"
+                        android:textColorHighlight="@color/design_default_color_secondary"
+                        android:textColorLink="@color/design_default_color_secondary" />
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/black"
+                        android:text="SAVE INFOMATION"
+                        android:textColor="#00BCD4"
+                        android:textColorHighlight="#00BCD4"
+                        android:textColorLink="#00BCD4" />
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/black"
+                        android:text="ADD IMAGE"
+                        android:textColor="@color/design_default_color_secondary"
+                        android:textColorHighlight="@color/design_default_color_secondary"
+                        android:textColorLink="@color/design_default_color_secondary" />
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+
+        <!-- Buttons -->
+
+    </RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

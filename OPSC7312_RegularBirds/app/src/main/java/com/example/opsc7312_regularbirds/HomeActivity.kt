@@ -18,6 +18,8 @@ class HomeActivity : AppCompatActivity() {
         val firstFragment = HomeFragment()
         val secondFragment=BirdListFragment()
         val thirdFragment=SettingsFragment()
+        val forthFragment=AddNewObservationFragment()
+        val fifthFragment=AreaDetailsFragment()
         //val thirdFragment=ThirdFragment()
         setCurrentFragment(firstFragment)
 
@@ -27,6 +29,8 @@ class HomeActivity : AppCompatActivity() {
                 R.id.nav_home -> setCurrentFragment(firstFragment)
                 R.id.nav_Birds -> setCurrentFragment(secondFragment)
                 R.id.nav_Settings -> setCurrentFragment(thirdFragment)
+                //R.id.nav_addNew -> setCurrentFragment(forthFragment)
+                R.id.nav_NearMe -> setCurrentFragment(fifthFragment)
             }
             true
         }
