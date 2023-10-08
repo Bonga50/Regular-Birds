@@ -4,27 +4,62 @@ package com.example.opsc7312_regularbirds
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.Manifest
+import android.annotation.SuppressLint
+import android.app.AlertDialog
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.icu.lang.UCharacter
+import android.util.TypedValue
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.asynclayoutinflater.view.AsyncLayoutInflater
 import androidx.core.content.ContextCompat
+import com.google.gson.Gson
+import com.google.gson.JsonElement
+import com.mapbox.android.gestures.MoveGestureDetector
+import com.mapbox.bindgen.Expected
+import com.mapbox.geojson.Feature
+import com.mapbox.geojson.FeatureCollection
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapInitOptions
 import com.mapbox.maps.MapView
 import com.mapbox.maps.MapboxMap
+import com.mapbox.maps.QueriedFeature
 import com.mapbox.maps.Style
+import com.mapbox.maps.ViewAnnotationAnchor
+import com.mapbox.maps.extension.style.image.image
+import com.mapbox.maps.extension.style.layers.generated.symbolLayer
+import com.mapbox.maps.extension.style.layers.properties.generated.IconAnchor
+import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
+import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
+import com.mapbox.maps.extension.style.sources.generated.rasterDemSource
+import com.mapbox.maps.extension.style.sources.getSourceAs
+import com.mapbox.maps.extension.style.style
+import com.mapbox.maps.extension.style.terrain.generated.terrain
+import com.mapbox.maps.plugin.annotation.AnnotationConfig
+import com.mapbox.maps.plugin.annotation.AnnotationPlugin
 import com.mapbox.maps.plugin.annotation.annotations
+import com.mapbox.maps.plugin.annotation.generated.OnPointAnnotationClickListener
+import com.mapbox.maps.plugin.annotation.generated.PointAnnotation
+import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
 import com.mapbox.maps.plugin.delegates.listeners.OnCameraChangeListener
+import com.mapbox.maps.plugin.gestures.OnMoveListener
 import com.mapbox.maps.plugin.gestures.gestures
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorBearingChangedListener
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorPositionChangedListener
 import com.mapbox.maps.plugin.locationcomponent.location
+import com.mapbox.maps.viewannotation.ViewAnnotationManager
 import com.mapbox.maps.viewannotation.viewAnnotationOptions
+import org.json.JSONObject
+import java.util.concurrent.CopyOnWriteArrayList
 
 
 class HomeFragment : Fragment(){
@@ -38,12 +73,17 @@ class HomeFragment : Fragment(){
         Locations(-122.4034, 37.7349),  // Excelsior
         Locations(-122.3934, 37.7249)   // Visitacion Valley
     )
+    var annotationApi: AnnotationPlugin? =null
+    private lateinit var annotationConfig: AnnotationConfig
+    var layerIDD = "map_annotation"
+    var markerList : ArrayList<PointAnnotationOptions> = ArrayList()
+    var pointAnnotationManager:PointAnnotationManager?=null
 
-
+    private val pointList = CopyOnWriteArrayList<Feature>()
     private lateinit var mapView:MapView
     private lateinit var mapboxMap: MapboxMap
     private  val MY_PERMISSIONS_REQUEST_LOCATION = 99
-
+    private lateinit var viewAnnotationManager: ViewAnnotationManager
     val listener = OnCameraChangeListener { cameraChangedEventData ->
         // Do something when the camera position changes
     }
@@ -57,6 +97,23 @@ class HomeFragment : Fragment(){
         mapView.gestures.focalPoint = mapView.getMapboxMap().pixelForCoordinate(it)
     }
 
+    private val onMoveListener = object : OnMoveListener {
+        override fun onMoveBegin(detector: MoveGestureDetector) {
+            onCameraTrackingDismissed()
+        }
+        override fun onMove(detector: MoveGestureDetector): Boolean {
+            return false
+        }
+
+        override fun onMoveEnd(detector: MoveGestureDetector) {}
+    }
+
+    private val asyncInflater by lazy { AsyncLayoutInflater(requireContext()) }
+
+    private var markerId = 0
+
+    private var markerWidth = 0
+    private var markerHeight = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -77,26 +134,40 @@ class HomeFragment : Fragment(){
                 MY_PERMISSIONS_REQUEST_LOCATION
             )
         }
+        val bitmap = BitmapFactory.decodeResource(resources, R.drawable.mapbox_marker_icon_blue)
+        markerWidth = bitmap.width
+        markerHeight = bitmap.height
         //getting the map
         mapView = view.findViewById(R.id.mapView);
         mapboxMap = mapView.getMapboxMap()
+        viewAnnotationManager = mapView.viewAnnotationManager
 
         mapView.getMapboxMap().loadStyleUri(
             Style.MAPBOX_STREETS,
             // After the style is loaded, initialize the Location component.
             object : Style.OnStyleLoaded {
                 override fun onStyleLoaded(style: Style) {
+                    prepareStyle(Style.SATELLITE_STREETS, bitmap)
+                    prepareStyle(Style.MAPBOX_STREETS, bitmap)
+                    mapView.gestures.addOnMoveListener(onMoveListener)
                     mapView.location.updateSettings {
                         enabled = true
                         pulsingEnabled = true
                     }
                     for (i in locations){
-                        makeMapMarker(i)
+                        val markerId = addMarkerAndReturnId(Point.fromLngLat(i.longitude, i.latitude))
+                        addViewAnnotation(Point.fromLngLat(i.longitude, i.latitude), markerId)
                     }
-
                 }
             }
         )
+
+        annotationApi=mapView?.annotations
+        annotationConfig = AnnotationConfig(
+            layerId =layerIDD
+        )
+        pointAnnotationManager = annotationApi?.createPointAnnotationManager(annotationConfig)
+        createMarker()
         // Add the listener to the map
         mapboxMap.addOnCameraChangeListener(listener)
 
@@ -127,25 +198,145 @@ class HomeFragment : Fragment(){
         mapboxMap.removeOnCameraChangeListener(listener)
     }
 
-    fun makeMapMarker(locations: Locations){
-        // Create an instance of the Annotation API and get the PointAnnotationManager.
-        val annotationApi = mapView?.annotations
-        val pointAnnotationManager = annotationApi?.createPointAnnotationManager(mapView)
-        // Convert the image resource to a Bitmap
-        val icon = BitmapFactory.decodeResource(resources, R.drawable.mapbox_marker_icon_blue)
-        // Set options for the resulting symbol layer.
-        val pointAnnotationOptions: PointAnnotationOptions = PointAnnotationOptions()
-            // Define a geographic coordinate.
-            .withPoint(Point.fromLngLat(locations.longitude, locations.latitude))
-            // Specify the bitmap you assigned to the point annotation
-            // The bitmap will be added to map style automatically.
-            .withIconImage(icon)
-        // Add the resulting pointAnnotation to the map.
-        pointAnnotationManager?.create(pointAnnotationOptions)
 
+    private fun onCameraTrackingDismissed() {
+
+        mapView.location
+            .removeOnIndicatorPositionChangedListener(onIndicatorPositionChangedListener)
+        mapView.location
+            .removeOnIndicatorBearingChangedListener(onIndicatorBearingChangedListener)
+        mapView.gestures.removeOnMoveListener(onMoveListener)
+    }
+
+
+    private fun prepareStyle(styleUri: String, bitmap: Bitmap) = style(styleUri) {
+        +image(BLUE_ICON_ID) {
+            bitmap(bitmap)
+        }
+        +geoJsonSource(SOURCE_ID) {
+            featureCollection(FeatureCollection.fromFeatures(pointList))
+        }
+        if (styleUri == Style.SATELLITE_STREETS) {
+            +rasterDemSource(TERRAIN_SOURCE) {
+                url(TERRAIN_URL_TILE_RESOURCE)
+            }
+            +terrain(TERRAIN_SOURCE)
+        }
+        +symbolLayer(LAYER_ID, SOURCE_ID) {
+            iconImage(BLUE_ICON_ID)
+            iconAnchor(IconAnchor.BOTTOM)
+            iconAllowOverlap(false)
+        }
+    }
+    @SuppressLint("SetTextI18n")
+    private fun addViewAnnotation(point: Point, markerId: String) {
+        viewAnnotationManager.addViewAnnotation(
+            resId = R.layout.item_callout_view,
+            options = viewAnnotationOptions {
+                geometry(point)
+                associatedFeatureId(markerId)
+                anchor(ViewAnnotationAnchor.BOTTOM)
+                allowOverlap(false)
+            },
+            asyncInflater = asyncInflater
+        ) { viewAnnotation ->
+            viewAnnotation.visibility = View.GONE
+            // calculate offsetY manually taking into account icon height only because of bottom anchoring
+            viewAnnotationManager.updateViewAnnotation(
+                viewAnnotation,
+                viewAnnotationOptions {
+                    offsetY(markerHeight)
+                }
+            )
+            viewAnnotation.findViewById<TextView>(R.id.textNativeView).text =
+                "lat=%.2f\nlon=%.2f".format(point.latitude(), point.longitude())
+            viewAnnotation.findViewById<ImageView>(R.id.closeNativeView).setOnClickListener { _ ->
+                viewAnnotationManager.removeViewAnnotation(viewAnnotation)
+            }
+            viewAnnotation.findViewById<Button>(R.id.selectButton).setOnClickListener { b ->
+                val button = b as Button
+                val isSelected = button.text.toString().equals("SELECT", true)
+                val pxDelta = (if (isSelected) SELECTED_ADD_COEF_DP.dpToPx() else -SELECTED_ADD_COEF_DP.dpToPx()).toInt()
+                button.text = if (isSelected) "DESELECT" else "SELECT"
+                viewAnnotationManager.updateViewAnnotation(
+                    viewAnnotation,
+                    viewAnnotationOptions {
+                        selected(isSelected)
+                    }
+                )
+                (button.layoutParams as ViewGroup.MarginLayoutParams).apply {
+                    bottomMargin += pxDelta
+                    rightMargin += pxDelta
+                    leftMargin += pxDelta
+                }
+                button.requestLayout()
+            }
+        }
+
+    }
+    fun clearAnotations(){
+        markerList= ArrayList()
+        pointAnnotationManager?.deleteAll()
+    }
+
+    private fun createMarker(){
+        clearAnotations()
+        pointAnnotationManager?.addClickListener(OnPointAnnotationClickListener {
+            annotation:PointAnnotation ->  onMarkerClick(annotation)
+            true
+        })
+        val bitmapImage = BitmapFactory.decodeResource(resources, R.drawable.mapbox_marker_icon_blue)
+
+        for (i in locations){
+            var jsonObject = JSONObject();
+            jsonObject.put("The clicked Location: ",i.latitude.toString() + "," + i.latitude.toString())
+            val pointAnnotationOptions: PointAnnotationOptions = PointAnnotationOptions()
+                .withPoint(Point.fromLngLat(i.longitude, i.latitude))
+                .withData(Gson().fromJson(jsonObject.toString(),JsonElement::class.java))
+                .withIconImage(bitmapImage)
+
+            markerList.add(pointAnnotationOptions)
+        }
+        pointAnnotationManager?.create(markerList);
+
+    }
+    fun onMarkerClick(marker: PointAnnotation) {
+        var jsonelement:JsonElement? =marker.getData()
+        AlertDialog.Builder(requireContext())
+            .setTitle("Marker clicked")
+            .setMessage("Cliked"+jsonelement.toString())
+            .setPositiveButton("OK"){
+                dialog,whichButton->dialog.dismiss()
+            }.show()
 
     }
 
+    private fun addMarkerAndReturnId(point: Point): String {
+        val currentId = "${MARKER_ID_PREFIX}${(markerId++)}"
+        pointList.add(Feature.fromGeometry(point, null, currentId))
+        val featureCollection = FeatureCollection.fromFeatures(pointList)
+        mapboxMap.getStyle { style ->
+            style.getSourceAs<GeoJsonSource>(SOURCE_ID)?.featureCollection(featureCollection)
+        }
+        return currentId
+    }
+
+    private fun Float.dpToPx() = TypedValue.applyDimension(
+        TypedValue.COMPLEX_UNIT_DIP,
+        this,
+        requireContext().resources.displayMetrics
+    )
+
+    private companion object {
+        const val BLUE_ICON_ID = "blue"
+        const val SOURCE_ID = "source_id"
+        const val LAYER_ID = "layer_id"
+        const val TERRAIN_SOURCE = "TERRAIN_SOURCE"
+        const val TERRAIN_URL_TILE_RESOURCE = "mapbox://mapbox.mapbox-terrain-dem-v1"
+        const val MARKER_ID_PREFIX = "view_annotation_"
+        const val SELECTED_ADD_COEF_DP: Float = 8f
+        const val STARTUP_TEXT = "Long click on a map to add a marker and click on a marker to pop-up annotation."
+    }
 
 
 }
