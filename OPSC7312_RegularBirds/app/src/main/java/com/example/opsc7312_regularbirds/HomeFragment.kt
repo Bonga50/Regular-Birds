@@ -19,6 +19,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.asynclayoutinflater.view.AsyncLayoutInflater
 import androidx.core.content.ContextCompat
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.gson.Gson
 import com.google.gson.JsonElement
 import com.mapbox.android.gestures.MoveGestureDetector
@@ -62,7 +63,7 @@ import org.json.JSONObject
 import java.util.concurrent.CopyOnWriteArrayList
 
 
-class HomeFragment : Fragment(){
+class HomeFragment : Fragment() {
 
     val locations = listOf(
         Locations(-122.4194, 37.7749),  // San Francisco
@@ -302,12 +303,15 @@ class HomeFragment : Fragment(){
     }
     fun onMarkerClick(marker: PointAnnotation) {
         var jsonelement:JsonElement? =marker.getData()
-        AlertDialog.Builder(requireContext())
-            .setTitle("Marker clicked")
-            .setMessage("Cliked"+jsonelement.toString())
-            .setPositiveButton("OK"){
-                dialog,whichButton->dialog.dismiss()
-            }.show()
+//        AlertDialog.Builder(requireContext())
+//            .setTitle("Marker clicked")
+//            .setMessage("Cliked"+jsonelement.toString())
+//            .setPositiveButton("OK"){
+//                dialog,whichButton->dialog.dismiss()
+//            }.show()
+        val bottomSheet = Popup_hotspotdetailsFragment()
+
+        bottomSheet.show(requireActivity().supportFragmentManager, "MyBottomSheet")
 
     }
 

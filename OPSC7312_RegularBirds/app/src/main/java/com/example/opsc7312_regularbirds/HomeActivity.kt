@@ -35,6 +35,9 @@ class HomeActivity : AppCompatActivity() {
             true
         }
 
+        val modalBottomSheet = Popup_hotspotdetailsFragment()
+        //modalBottomSheet.show(supportFragmentManager, Popup_hotspotdetailsFragment.TAG)
+
     }
     private fun setCurrentFragment(fragment: Fragment)=
         supportFragmentManager.beginTransaction().apply {
