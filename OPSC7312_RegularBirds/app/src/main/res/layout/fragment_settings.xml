@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SettingsFragment">
+    tools:context=".SettingsFragment"
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/lblSettings"
@@ -14,13 +15,66 @@
         android:text="Settings"
         android:textSize="28dp"
         android:padding="20dp"/>
-    <ListView
-        android:id="@+id/lstSettings"
+    <TextView
+        android:id="@+id/lblSettingsUnits"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/lblSettings"
-        android:layout_margin="10dp"/>
+        app:layout_constraintTop_toTopOf="parent"
+        android:text="Unit of measurement"
+        android:textSize="18dp"
+        android:padding="20dp"/>
+    <!-- Option 1: Change Unit of Measurement -->
+    <RadioGroup
+        android:id="@+id/unitOfMeasurementRadioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <RadioButton
+            android:id="@+id/radioOptionImperial"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Imperial (Miles)" />
+
+        <RadioButton
+            android:id="@+id/radioOptionMetric"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Metric (Kilometers)" />
+    </RadioGroup>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
 
+        <TextView
+            android:id="@+id/lblSettingsMaxDistance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            android:text="Travel Distance"
+            android:textSize="18dp"
+            android:padding="20dp"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/lblSettingsMaxNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            android:text="[number]"
+            android:textSize="18dp"
+            android:padding="20dp"/>
+
+    </LinearLayout>
+    <!-- Option 2: Change a Double Value -->
+    <SeekBar
+        android:id="@+id/doubleValueSeekBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:max="100" />
+
+
+</LinearLayout>

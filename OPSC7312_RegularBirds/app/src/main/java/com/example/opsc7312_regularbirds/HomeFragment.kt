@@ -9,6 +9,7 @@ import android.app.AlertDialog
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.icu.lang.UCharacter
+import android.util.Log
 import android.util.TypedValue
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -94,6 +95,7 @@ class HomeFragment : Fragment() {
     }
 
     private val onIndicatorPositionChangedListener = OnIndicatorPositionChangedListener {
+       Log.d("Location ", it.latitude().toString())
         mapView.getMapboxMap().setCamera(CameraOptions.Builder().center(it).build())
         mapView.gestures.focalPoint = mapView.getMapboxMap().pixelForCoordinate(it)
     }
@@ -170,6 +172,7 @@ class HomeFragment : Fragment() {
         // Pass the user's location to camera
         mapView.location.addOnIndicatorPositionChangedListener(onIndicatorPositionChangedListener)
         mapView.location.addOnIndicatorBearingChangedListener(onIndicatorBearingChangedListener)
+
 
         return view
     }

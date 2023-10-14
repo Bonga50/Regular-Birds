@@ -28,6 +28,7 @@ import com.mapbox.navigation.base.route.RouterFailure
 import com.mapbox.navigation.base.route.RouterOrigin
 import com.mapbox.navigation.core.lifecycle.MapboxNavigationApp
 import com.example.opsc7312_regularbirds.databinding.ActivityBirdNavigationBinding
+import com.mapbox.api.directions.v5.DirectionsCriteria
 import com.mapbox.api.directions.v5.models.Bearing
 import com.mapbox.bindgen.Expected
 import com.mapbox.maps.EdgeInsets
@@ -85,6 +86,7 @@ import com.mapbox.navigation.ui.tripprogress.view.MapboxTripProgressView
 
 class BirdNavigationActivity : AppCompatActivity() {
     private lateinit var binding: ActivityBirdNavigationBinding
+
     private companion object {
         private const val BUTTON_ANIMATION_DURATION = 1500L
     }
@@ -422,12 +424,12 @@ class BirdNavigationActivity : AppCompatActivity() {
         speechApi = MapboxSpeechApi(
             this,
             getString(R.string.mapbox_access_token),
-            Locale.US.language
+            Locale.UK.language
         )
         voiceInstructionsPlayer = MapboxVoiceInstructionsPlayer(
             this,
             getString(R.string.mapbox_access_token),
-            Locale.US.language
+            Locale.UK.language
         )
 
         // initialize route line, the withRouteLineBelowLayerId is specified to place
@@ -537,7 +539,7 @@ class BirdNavigationActivity : AppCompatActivity() {
             )
         )
         mapboxReplayer.playFirstLocation()
-        mapboxReplayer.playbackSpeed(1.0)
+        mapboxReplayer.playbackSpeed(3.0)
     }
 
     private fun findRoute(destination: Point) {
@@ -556,6 +558,7 @@ class BirdNavigationActivity : AppCompatActivity() {
                 .applyDefaultNavigationOptions()
                 .applyLanguageAndVoiceUnitOptions(this)
                 .coordinatesList(listOf(originPoint, destination))
+                .voiceUnits(DirectionsCriteria.METRIC)
                 // provide the bearing for the origin of the request to ensure
                 // that the returned route faces in the direction of the current user movement
                 .bearingsList(
@@ -567,9 +570,11 @@ class BirdNavigationActivity : AppCompatActivity() {
                         null
                     )
                 )
+                .voiceInstructions(true)
+                .steps(true)
                 .layersList(listOf(mapboxNavigation.getZLevel(), null))
                 .build(),
-            object : NavigationRouterCallback {
+                object : NavigationRouterCallback {
                 override fun onCanceled(routeOptions: RouteOptions, routerOrigin: RouterOrigin) {
                     // no impl
                 }
