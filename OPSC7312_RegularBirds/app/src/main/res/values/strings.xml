@@ -4,4 +4,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="mapbox_access_token">pk.eyJ1IjoidGhlcmVhbGJvbmdhIiwiYSI6ImNsbG0yMXF2dTJqZm0zZ21nbm43b3RyamYifQ.DeWMvQ5HgM53BMjgWqc2TQ</string>
     <string name="mapbox_NavStyleURL">mapbox://styles/therealbonga/cln3lvilg037001pjeqc747ua</string>
+    <!--View Annotations-->
+    <string name="content_description_close">Close callout</string>
 </resources>
