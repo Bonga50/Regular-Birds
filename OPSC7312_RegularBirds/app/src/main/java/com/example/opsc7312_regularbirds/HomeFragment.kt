@@ -15,6 +15,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import com.google.gson.Gson
 import com.google.gson.JsonElement
+import com.mapbox.android.gestures.MoveGestureDetector
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapInitOptions
@@ -30,10 +31,12 @@ import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
 import com.mapbox.maps.plugin.delegates.listeners.OnCameraChangeListener
+import com.mapbox.maps.plugin.gestures.OnMoveListener
 import com.mapbox.maps.plugin.gestures.gestures
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorBearingChangedListener
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorPositionChangedListener
 import com.mapbox.maps.plugin.locationcomponent.location
+import com.mapbox.maps.viewannotation.ViewAnnotationManager
 import com.mapbox.maps.viewannotation.viewAnnotationOptions
 import org.json.JSONObject
 import retrofit2.Call
@@ -43,13 +46,8 @@ import retrofit2.Response
 
 class HomeFragment : Fragment(){
 
-    private val handler = Handler(Looper.getMainLooper())
-    private val runnable = object : Runnable {
-        override fun run() {
-            mapView.location.addOnIndicatorPositionChangedListener(onIndicatorPositionChangedListener)
-            handler.postDelayed(this, 30000) // Run every 30 seconds
-        }
-    }
+
+    private lateinit var viewAnnotationManager: ViewAnnotationManager
     private lateinit var hotspotInterface: HotspotCollection
     private val apiKey = "6p4jn23qffqh"
     var annotationApi: AnnotationPlugin? =null
@@ -58,6 +56,8 @@ class HomeFragment : Fragment(){
     var markerList : ArrayList<PointAnnotationOptions> = ArrayList()
     var pointAnnotationManager: PointAnnotationManager?=null
     var location = mutableListOf<Locations>()
+    var latitude:Double=0.0;
+    var longitude:Double=0.0;
     private lateinit var mapView:MapView
     private lateinit var mapboxMap: MapboxMap
     private  val MY_PERMISSIONS_REQUEST_LOCATION = 99
@@ -72,12 +72,32 @@ class HomeFragment : Fragment(){
 
     private val onIndicatorPositionChangedListener = OnIndicatorPositionChangedListener {
         Log.d("Location ", it.latitude().toString())
-        hotspots(it.latitude(),it.longitude())
+        if (  latitude!=it.latitude() && longitude!=it.longitude()){
+            latitude = it.latitude()
+            longitude = it.longitude()
+            hotspots(latitude,longitude)
+        }
         mapView.getMapboxMap().setCamera(CameraOptions.Builder().center(it).build())
         mapView.gestures.focalPoint = mapView.getMapboxMap().pixelForCoordinate(it)
 
     }
 
+    private val onMoveListener = object : OnMoveListener {
+        override fun onMoveBegin(detector: MoveGestureDetector) {
+            onCameraTrackingDismissed()
+        }
+        override fun onMove(detector: MoveGestureDetector): Boolean {
+            return false
+        }
+
+        override fun onMoveEnd(detector: MoveGestureDetector) {}
+    }
+
+    //private val asyncInflater by lazy { AsyncLayoutInflater(requireContext()) }
+    private var markerId = 0
+
+    private var markerWidth = 0
+    private var markerHeight = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -101,9 +121,11 @@ class HomeFragment : Fragment(){
         //getting the map
         mapView = view.findViewById(R.id.mapView);
         mapboxMap = mapView.getMapboxMap()
-
+        val bitmap = BitmapFactory.decodeResource(resources, R.drawable.mapbox_marker_icon_blue)
+        markerWidth = bitmap.width
+        markerHeight = bitmap.height
         hotspotInterface = Hotspots.createEBirdService()
-
+        viewAnnotationManager = mapView.viewAnnotationManager
         mapView.getMapboxMap().loadStyleUri(
             Style.MAPBOX_STREETS,
             // After the style is loaded, initialize the Location component.
@@ -113,23 +135,36 @@ class HomeFragment : Fragment(){
                         enabled = true
                         pulsingEnabled = true
                     }
-
-
                 }
             }
         )
+        annotationApi=mapView?.annotations
+        annotationConfig = AnnotationConfig(
+            layerId =layerIDD
+        )
+        pointAnnotationManager = annotationApi?.createPointAnnotationManager(annotationConfig)
         // Add the listener to the map
         mapboxMap.addOnCameraChangeListener(listener)
 
         // Pass the user's location to camera
-        handler.post(runnable)
-        //mapView.location.addOnIndicatorPositionChangedListener(onIndicatorPositionChangedListener)
-        //mapView.location.addOnIndicatorBearingChangedListener(onIndicatorBearingChangedListener)
+
+        mapView.location.addOnIndicatorPositionChangedListener(onIndicatorPositionChangedListener)
+        mapView.location.addOnIndicatorBearingChangedListener(onIndicatorBearingChangedListener)
         return view
     }
 
+
+    private fun onCameraTrackingDismissed() {
+
+        mapView.location
+            .removeOnIndicatorPositionChangedListener(onIndicatorPositionChangedListener)
+        mapView.location
+            .removeOnIndicatorBearingChangedListener(onIndicatorBearingChangedListener)
+        mapView.gestures.removeOnMoveListener(onMoveListener)
+    }
+
     fun hotspots(latitude: Double, longitude: Double) {
-        val radius = 25 // 10 kilometers
+        val radius = 50 // 10 kilometers
 
         hotspotInterface.getHotspots(apiKey,latitude, longitude, radius)
             .enqueue(object : Callback<List<Locations>> {
@@ -169,36 +204,12 @@ class HomeFragment : Fragment(){
     override fun onDestroy() {
         super.onDestroy()
         mapboxMap.removeOnCameraChangeListener(listener)
+        // Remove your listeners here
+        mapView.gestures.removeOnMoveListener(onMoveListener)
+        mapView.location.removeOnIndicatorPositionChangedListener(onIndicatorPositionChangedListener)
+        mapView.location.removeOnIndicatorBearingChangedListener(onIndicatorBearingChangedListener)
     }
 
-    override fun onResume() {
-        super.onResume()
-        handler.post(runnable) // Start updates when fragment is resumed
-        mapView.location.addOnIndicatorPositionChangedListener(onIndicatorPositionChangedListener)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        handler.removeCallbacks(runnable) // Stop updates when fragment is paused
-        mapView.location
-            .removeOnIndicatorPositionChangedListener(onIndicatorPositionChangedListener)
-    }
-    fun makeMapMarker(locations: Locations){
-        // Create an instance of the Annotation API and get the PointAnnotationManager.
-        val annotationApi = mapView?.annotations
-        val pointAnnotationManager = annotationApi?.createPointAnnotationManager(mapView)
-        // Convert the image resource to a Bitmap
-        val icon = BitmapFactory.decodeResource(resources, R.drawable.mapbox_marker_icon_blue)
-        // Set options for the resulting symbol layer.
-        val pointAnnotationOptions: PointAnnotationOptions = PointAnnotationOptions()
-            // Define a geographic coordinate.
-            .withPoint(Point.fromLngLat(locations.lng, locations.lat))
-            // Specify the bitmap you assigned to the point annotation
-            // The bitmap will be added to map style automatically.
-            .withIconImage(icon)
-        // Add the resulting pointAnnotation to the map.
-        pointAnnotationManager?.create(pointAnnotationOptions)
-    }
     fun clearAnotations(){
         markerList= ArrayList()
         pointAnnotationManager?.deleteAll()
