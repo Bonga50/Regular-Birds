@@ -1,12 +1,10 @@
 package com.example.opsc7312_regularbirds
 
-class Locations {
-    constructor(){}
-    constructor(longitude: Double, latitude: Double) {
-        this.longitude = longitude
-        this.latitude = latitude
-    }
+data class Locations(val locId: String,
+                     val locName: String,
+                     val lat: Double,
+                     val lng: Double,
+                     val distance: Int // Add distance property
+                     )
 
-    var longitude: Double = 0.0
-    var latitude: Double = 0.0
-}
+

@@ -30,6 +30,7 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
             val username = usernameEditText.text.toString()
             val password = passwordEditText.text.toString()
+            startActivity(intent)
             // authentication performed here
             if (isValidCredentials(username, password)) {
                 // the home class is yet to be created so the error will be there
@@ -43,6 +44,8 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "Invalid credentials", Toast.LENGTH_SHORT).show()
 
             }
+
+
 
 
         }
