@@ -3,32 +3,35 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".AddNewObservationFragment">
+    <!-- Header Label -->
 
-    <RelativeLayout
+    <TextView
+        android:id="@+id/headerLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_gravity="center_vertical"
+        android:backgroundTint="@color/white"
+        android:text="ADD NEW BIRD OBSERVATION"
+        android:textColor="@color/design_default_color_secondary"
+        android:layout_margin="10dp"
+        android:padding="25dp"
+        android:textSize="24sp" />
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <!-- Header Label -->
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@+id/headerLabel">
 
         <!-- ScrollView for Fields and ImageView -->
-        <TextView
-            android:id="@+id/headerLabel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/edit_text_3d"
-            android:backgroundTint="@color/white"
-            android:fontFamily="@font/asset"
-            android:foregroundTint="@color/design_default_color_secondary"
-            android:gravity="center"
-            android:padding="16dp"
-            android:text="ADD NEW BIRD"
-            android:textColor="@color/design_default_color_secondary"
-            android:textSize="24sp" />
-
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="603dp"
+            android:layout_height="wrap_content"
             android:layout_below="@id/headerLabel">
 
             <LinearLayout
@@ -36,76 +39,34 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <!-- Plain Text Fields -->
 
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="72dp"
-                    android:background="@drawable/edit_text_outline"
-                    android:hint="NAME" />
 
-                <EditText
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/loBirdname"
+                    android:layout_margin="10dp"
                     android:layout_width="match_parent"
-                    android:layout_height="61dp"
-                    android:background="@color/material_dynamic_neutral90"
-                    android:hint="COLOUR" />
+                    android:layout_height="wrap_content"
+                    android:hint="BIRD NAME"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="64dp"
-                    android:hint="PATTERN"
-                    android:background="@drawable/edit_text_outline" />
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/txtBirdName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:textColor="@color/black"
+                        android:textColorHint="@color/grey" />
 
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="62dp"
-                    android:background="@color/material_dynamic_neutral90"
-                    android:hint="SIZE" />
-
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="63dp"
-                    android:hint="SHAPE"
-                    android:background="@drawable/edit_text_outline" />
-
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="63dp"
-                    android:background="@color/material_dynamic_neutral90"
-                    android:hint="TAIL" />
-
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:background="@drawable/edit_text_outline"
-                    android:hint="SONG" />
-
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="65dp"
-                    android:background="@color/material_dynamic_neutral90"
-                    android:hint="HABITAT" />
-
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="84dp"
-                    android:hint="BEHAVIOR"
-                    android:background="@drawable/edit_text_outline" />
-
-                <!-- ImageView -->
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="54dp"
-                    android:adjustViewBounds="true"
-                    android:background="@drawable/edit_text_outline"
-                    android:scaleType="fitCenter"></ImageView>
-                <!-- android:src="@drawable/your_image" />-->
+                </com.google.android.material.textfield.TextInputLayout>
+                <!-- Buttons -->
                 <LinearLayout
                     android:id="@+id/buttonLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:layout_alignParentBottom="true"
+                    android:padding="10dp"
                     android:gravity="center">
 
                     <Button
@@ -113,6 +74,7 @@
                         android:layout_height="wrap_content"
                         android:backgroundTint="@color/black"
                         android:text="CLEAR"
+                        android:layout_margin="10dp"
                         android:textColor="@color/design_default_color_secondary"
                         android:textColorHighlight="@color/design_default_color_secondary"
                         android:textColorLink="@color/design_default_color_secondary" />
@@ -121,25 +83,19 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:backgroundTint="@color/black"
+                        android:layout_margin="10dp"
                         android:text="SAVE INFOMATION"
                         android:textColor="#00BCD4"
                         android:textColorHighlight="#00BCD4"
                         android:textColorLink="#00BCD4" />
 
-                    <Button
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:backgroundTint="@color/black"
-                        android:text="ADD IMAGE"
-                        android:textColor="@color/design_default_color_secondary"
-                        android:textColorHighlight="@color/design_default_color_secondary"
-                        android:textColorLink="@color/design_default_color_secondary" />
+
                 </LinearLayout>
             </LinearLayout>
         </ScrollView>
 
-        <!-- Buttons -->
 
-    </RelativeLayout>
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

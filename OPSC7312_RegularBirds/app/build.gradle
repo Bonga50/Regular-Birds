@@ -16,6 +16,9 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+    viewBinding {
+        enabled = true
+    }
 
     buildTypes {
         release {
@@ -34,7 +37,8 @@ android {
 }
 
 dependencies {
-
+    implementation "com.mapbox.navigation:android:2.10.1"
+    implementation "com.mapbox.navigation:ui-dropin:2.10.1"
     implementation 'androidx.core:core-ktx:1.8.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.5.0'

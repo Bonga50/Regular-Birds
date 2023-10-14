@@ -32,7 +32,7 @@ class LocationInput : AppCompatActivity() {
 
     }
 
-    fun performSearch(){
+    private fun performSearch(){
         val intent = Intent(this, BirdNavigationActivity::class.java)
         startActivity(intent)
     }

@@ -148,16 +148,11 @@ class HomeFragment : Fragment() {
             // After the style is loaded, initialize the Location component.
             object : Style.OnStyleLoaded {
                 override fun onStyleLoaded(style: Style) {
-                    prepareStyle(Style.SATELLITE_STREETS, bitmap)
                     prepareStyle(Style.MAPBOX_STREETS, bitmap)
                     mapView.gestures.addOnMoveListener(onMoveListener)
                     mapView.location.updateSettings {
                         enabled = true
                         pulsingEnabled = true
-                    }
-                    for (i in locations){
-                        val markerId = addMarkerAndReturnId(Point.fromLngLat(i.longitude, i.latitude))
-                        addViewAnnotation(Point.fromLngLat(i.longitude, i.latitude), markerId)
                     }
                 }
             }
@@ -197,6 +192,10 @@ class HomeFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         mapboxMap.removeOnCameraChangeListener(listener)
+        // Remove your listeners here
+        mapView.gestures.removeOnMoveListener(onMoveListener)
+        mapView.location.removeOnIndicatorPositionChangedListener(onIndicatorPositionChangedListener)
+        mapView.location.removeOnIndicatorBearingChangedListener(onIndicatorBearingChangedListener)
     }
 
 
@@ -229,52 +228,7 @@ class HomeFragment : Fragment() {
             iconAllowOverlap(false)
         }
     }
-    @SuppressLint("SetTextI18n")
-    private fun addViewAnnotation(point: Point, markerId: String) {
-        viewAnnotationManager.addViewAnnotation(
-            resId = R.layout.item_callout_view,
-            options = viewAnnotationOptions {
-                geometry(point)
-                associatedFeatureId(markerId)
-                anchor(ViewAnnotationAnchor.BOTTOM)
-                allowOverlap(false)
-            },
-            asyncInflater = asyncInflater
-        ) { viewAnnotation ->
-            viewAnnotation.visibility = View.GONE
-            // calculate offsetY manually taking into account icon height only because of bottom anchoring
-            viewAnnotationManager.updateViewAnnotation(
-                viewAnnotation,
-                viewAnnotationOptions {
-                    offsetY(markerHeight)
-                }
-            )
-            viewAnnotation.findViewById<TextView>(R.id.textNativeView).text =
-                "lat=%.2f\nlon=%.2f".format(point.latitude(), point.longitude())
-            viewAnnotation.findViewById<ImageView>(R.id.closeNativeView).setOnClickListener { _ ->
-                viewAnnotationManager.removeViewAnnotation(viewAnnotation)
-            }
-            viewAnnotation.findViewById<Button>(R.id.selectButton).setOnClickListener { b ->
-                val button = b as Button
-                val isSelected = button.text.toString().equals("SELECT", true)
-                val pxDelta = (if (isSelected) SELECTED_ADD_COEF_DP.dpToPx() else -SELECTED_ADD_COEF_DP.dpToPx()).toInt()
-                button.text = if (isSelected) "DESELECT" else "SELECT"
-                viewAnnotationManager.updateViewAnnotation(
-                    viewAnnotation,
-                    viewAnnotationOptions {
-                        selected(isSelected)
-                    }
-                )
-                (button.layoutParams as ViewGroup.MarginLayoutParams).apply {
-                    bottomMargin += pxDelta
-                    rightMargin += pxDelta
-                    leftMargin += pxDelta
-                }
-                button.requestLayout()
-            }
-        }
 
-    }
     fun clearAnotations(){
         markerList= ArrayList()
         pointAnnotationManager?.deleteAll()
@@ -311,7 +265,7 @@ class HomeFragment : Fragment() {
 //            }.show()
         val bottomSheet = Popup_hotspotdetailsFragment()
 
-        bottomSheet.show(requireActivity().supportFragmentManager, "MyBottomSheet")
+        bottomSheet.show(getChildFragmentManager(), "MyBottomSheet")
 
     }
 
