@@ -1,24 +1,23 @@
 package com.example.opsc7312_regularbirds
 
 
-import android.content.pm.PackageManager
-import android.os.Bundle
 import android.Manifest
+import android.app.AlertDialog
+import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
-import android.os.Handler
-import android.os.Looper
+import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import com.google.gson.Gson
 import com.google.gson.JsonElement
 import com.mapbox.android.gestures.MoveGestureDetector
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
-import com.mapbox.maps.MapInitOptions
 import com.mapbox.maps.MapView
 import com.mapbox.maps.MapboxMap
 import com.mapbox.maps.Style
@@ -37,7 +36,6 @@ import com.mapbox.maps.plugin.locationcomponent.OnIndicatorBearingChangedListene
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorPositionChangedListener
 import com.mapbox.maps.plugin.locationcomponent.location
 import com.mapbox.maps.viewannotation.ViewAnnotationManager
-import com.mapbox.maps.viewannotation.viewAnnotationOptions
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
@@ -58,16 +56,24 @@ class HomeFragment : Fragment(){
     var location = mutableListOf<Locations>()
     var latitude:Double=0.0;
     var longitude:Double=0.0;
+    var bearing:Double=-1.0;
     private lateinit var mapView:MapView
     private lateinit var mapboxMap: MapboxMap
     private  val MY_PERMISSIONS_REQUEST_LOCATION = 99
+
 
     val listener = OnCameraChangeListener { cameraChangedEventData ->
         // Do something when the camera position changes
     }
     // Get the user's location as coordinates
     private val onIndicatorBearingChangedListener = OnIndicatorBearingChangedListener {
-        mapView.getMapboxMap().setCamera(CameraOptions.Builder().bearing(it).build())
+        Log.d("bearing ", it.toString())
+        if (latitude!=0.0&&longitude!=0.0){
+            bearing=it;
+            mapView.getMapboxMap().setCamera(CameraOptions.Builder().center(Point.fromLngLat(longitude,latitude)).build())
+        }
+            mapView.getMapboxMap().setCamera(CameraOptions.Builder().bearing(it).build())
+
     }
 
     private val onIndicatorPositionChangedListener = OnIndicatorPositionChangedListener {
@@ -76,8 +82,9 @@ class HomeFragment : Fragment(){
             latitude = it.latitude()
             longitude = it.longitude()
             hotspots(latitude,longitude)
+            BirdHotspots.setUserOriginLocation(latitude,longitude)
         }
-        mapView.getMapboxMap().setCamera(CameraOptions.Builder().center(it).build())
+
         mapView.gestures.focalPoint = mapView.getMapboxMap().pixelForCoordinate(it)
 
     }
@@ -105,6 +112,9 @@ class HomeFragment : Fragment(){
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_home, container, false)
+        var btnRecenter = view.findViewById<ImageView>(R.id.btnRecenter)
+        latitude=0.0;
+        longitude=0.0;
 
         // Check for location permission
         if (ContextCompat.checkSelfPermission(
@@ -150,6 +160,11 @@ class HomeFragment : Fragment(){
 
         mapView.location.addOnIndicatorPositionChangedListener(onIndicatorPositionChangedListener)
         mapView.location.addOnIndicatorBearingChangedListener(onIndicatorBearingChangedListener)
+
+        btnRecenter.setOnClickListener{
+            mapView.getMapboxMap().setCamera(CameraOptions.Builder().center(Point.fromLngLat(longitude,latitude)).build())
+        }
+
         return view
     }
 
@@ -164,18 +179,23 @@ class HomeFragment : Fragment(){
     }
 
     fun hotspots(latitude: Double, longitude: Double) {
-        val radius = 50 // 10 kilometers
+        BirdHotspots.clearLocations()
+        val radius = BirdHotspots.getMaxDistance()
 
+        BirdHotspots.resetIdCount()
         hotspotInterface.getHotspots(apiKey,latitude, longitude, radius)
             .enqueue(object : Callback<List<Locations>> {
                 override fun onResponse(call: Call<List<Locations>>, response: Response<List<Locations>>) {
                      if (response.isSuccessful) {
                         val hotspots = response.body()
                         for (i in response.body()!!) {
-                            location.add(i)
+                            i.obsvId = BirdHotspots.generateId()
+                            BirdHotspots.addLocation(i)
                         }
-
-                         createMarker()
+                         location = BirdHotspots.locationsList
+                         if (isAdded) {
+                             createMarker()
+                         }
                     }
                 }
 
@@ -212,6 +232,7 @@ class HomeFragment : Fragment(){
 
     fun clearAnotations(){
         markerList= ArrayList()
+
         pointAnnotationManager?.deleteAll()
     }
 
@@ -225,7 +246,7 @@ class HomeFragment : Fragment(){
 
         for (i in location){
             var jsonObject = JSONObject();
-            jsonObject.put("The clicked Location: ",i.lng.toString() + "," + i.lat.toString())
+            jsonObject.put("ID",i.obsvId.toString())
             val pointAnnotationOptions: PointAnnotationOptions = PointAnnotationOptions()
                 .withPoint(Point.fromLngLat(i.lng, i.lat))
                 .withData(Gson().fromJson(jsonObject.toString(), JsonElement::class.java))
@@ -236,18 +257,21 @@ class HomeFragment : Fragment(){
         pointAnnotationManager?.create(markerList);
 
     }
+
     fun onMarkerClick(marker: PointAnnotation) {
         var jsonelement:JsonElement? =marker.getData()
+        val jsonObj = JSONObject(jsonelement.toString())
+        val value: String = jsonObj.getString("ID")
 //        AlertDialog.Builder(requireContext())
 //            .setTitle("Marker clicked")
-//            .setMessage("Cliked"+jsonelement.toString())
+//            .setMessage("Cliked"+value)
 //            .setPositiveButton("OK"){
 //                dialog,whichButton->dialog.dismiss()
 //            }.show()
         val bottomSheet = Popup_hotspotdetailsFragment()
-
+        BirdHotspots.setSelectedHotspot(value.toInt())
         bottomSheet.show(getChildFragmentManager(), "MyBottomSheet")
-
+        BirdHotspots.setUserOriginLocation(latitude,longitude)
     }
 
 

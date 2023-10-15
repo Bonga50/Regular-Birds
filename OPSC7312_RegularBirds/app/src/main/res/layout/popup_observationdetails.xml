@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/lblObservationTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="28dp"
+        android:layout_margin="10dp"
+        android:text="[Observation Id]"/>
+
+    <TextView
+        android:id="@+id/lblObservationBirdName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:textSize="22dp"
+        android:text="[Observation Birdname]"/>
+
+    <TextView
+        android:id="@+id/lblObservationDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:textSize="22dp"
+        android:text="[Observation Date]"/>
+
+    <TextView
+        android:id="@+id/lblObservationLongitude"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:textSize="22dp"
+        android:text="[Observation Longitude]"/>
+
+    <TextView
+        android:id="@+id/lblObservationLatitude"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:textSize="22dp"
+        android:text="[Observation Latitude]"/>
+
+</LinearLayout>

@@ -1,32 +1,82 @@
 package com.example.opsc7312_regularbirds
 
 object BirdHotspots {
-    lateinit var  selectedBirdHotspot : BirdHotspotModel
-    val birdHotspotList = listOf(
-        BirdHotspotModel("1", "American Robin", "Turdus migratorius", -77.0369, 38.9072, "Washington, D.C."),
-        BirdHotspotModel("2", "Mallard", "Anas platyrhynchos", -122.4194, 37.7749, "San Francisco, CA"),
-        BirdHotspotModel("3", "Northern Cardinal", "Cardinalis cardinalis", -84.3879, 33.7490, "Atlanta, GA"),
-        BirdHotspotModel("4", "Black-capped Chickadee", "Poecile atricapillus", -71.0589, 42.3601, "Boston, MA"),
-        BirdHotspotModel("5", "Bald Eagle", "Haliaeetus leucocephalus", -77.0369, 38.9072, "Washington, D.C.")
-    )
 
-    fun setSelectedhotSpotData(locId:String){
-        selectedBirdHotspot= birdHotspotList.filter {it.locId.equals(locId)}.first();
+    var selectedLocation: Locations? = null
+    val locationsList = mutableListOf<Locations>()
+    var idCount = 0
+
+    var userLatitude:Double=0.0;
+    var userLongitude:Double=0.0;
+
+    private var maxDistance: Int = 10
+    private var unitOfMeasurement: String = "Metric"
+
+    // Method to add a location to the list
+    fun addLocation(location: Locations) {
+        locationsList.add(location)
     }
 
-    fun getSelectedHotSpotData():BirdHotspotModel{
-        return selectedBirdHotspot
+    // Method to add multiple locations to the list
+    fun addLocations(locations: List<Locations>) {
+        locationsList.addAll(locations)
     }
 
-    fun getTop100HotspotData(): List<BirdHotspotModel>{
-        var tempRecent: List<BirdHotspotModel>
-
-        tempRecent = birdHotspotList
-        if (tempRecent.size < 30) {
-            return tempRecent
-        } else {
-            return tempRecent.take(30)
-        }
+    //method to clear the whole list
+    fun clearLocations() {
+        locationsList.clear()
     }
+
+    // Method to get a location by obsvId
+    fun getLocationByObsvId(obsvId: Int): Locations? {
+        return locationsList.find { it.obsvId == obsvId }
+    }
+
+    // Method to increment idCount
+    fun generateId(): Int {
+        return ++idCount
+    }
+
+    // Method to reset idCount to 0
+    fun resetIdCount() {
+        idCount = 0
+    }
+
+
+    // Method to set selectedLocation by obsvId
+    fun setSelectedHotspot(obsvId: Int) {
+        selectedLocation = getLocationByObsvId(obsvId)
+    }
+
+    // Method to get selectedLocation
+    fun obtainSelectedLocation(): Locations? {
+        return selectedLocation
+    }
+
+    //Method to set the users original location
+    fun setUserOriginLocation(latitude: Double, longitude: Double) {
+        userLatitude = latitude
+        userLongitude = longitude
+    }
+
+    fun getUserOriginLocation(): Pair<Double, Double> {
+        return Pair(userLongitude, userLatitude)
+    }
+    fun getMaxDistance(): Int {
+        return maxDistance
+    }
+
+    fun setMaxDistance(maxDistance: Int) {
+        this.maxDistance = maxDistance
+    }
+
+    fun getUnitOfMeasurement(): String {
+        return unitOfMeasurement
+    }
+
+    fun setUnitOfMeasurement(unitOfMeasurement: String) {
+        this.unitOfMeasurement = unitOfMeasurement
+    }
+
 
 }
