@@ -73,11 +73,12 @@
     </LinearLayout>
     <!-- Option 2: Change a Double Value -->
     <SeekBar
-        android:id="@+id/doubleValueSeekBar"
+        android:id="@+id/sbMaxDistance"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp"
-        android:max="100" />
+        android:layout_margin="10dp"
+        android:max="50" />
 
 
 </LinearLayout>

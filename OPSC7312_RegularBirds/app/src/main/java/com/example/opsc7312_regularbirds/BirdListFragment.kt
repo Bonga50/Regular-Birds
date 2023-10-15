@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -29,6 +30,15 @@ class BirdListFragment : Fragment(), RVadapter_Observations.OnItemClickListener 
         recyclerViewAdapter.itemClickListener = this
 
         recyclerView.adapter = recyclerViewAdapter
+
+        //button to add new observation
+        val btnCreateObservation = view.findViewById<Button>(R.id.btnCreateObservation)
+        val activity = activity as HomeActivity
+        btnCreateObservation.setOnClickListener {
+            var forthFragment = AddNewObservationFragment()
+
+            activity.setCurrentFragment(forthFragment)
+        }
         return view
     }
 

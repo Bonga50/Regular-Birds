@@ -2,6 +2,7 @@ package com.example.opsc7312_regularbirds
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.content.res.Resources
@@ -87,7 +88,7 @@ import com.mapbox.navigation.ui.tripprogress.view.MapboxTripProgressView
 
 class BirdNavigationActivity : AppCompatActivity() {
     private lateinit var binding: ActivityBirdNavigationBinding
-
+    lateinit var unitOfMeasurement :String ;
     private companion object {
         private const val BUTTON_ANIMATION_DURATION = 1500L
     }
@@ -451,6 +452,12 @@ class BirdNavigationActivity : AppCompatActivity() {
         binding.mapView.getMapboxMap().loadStyleUri(NavigationStyles.NAVIGATION_DAY_STYLE) {
             // add long click listener that search for a route to the clicked destination
             val location = BirdHotspots.obtainSelectedLocation()
+            //Checking the unit od measurement
+            if (BirdHotspots.getUnitOfMeasurement().equals("Metric")) {
+                unitOfMeasurement = DirectionsCriteria.METRIC
+            }else{
+                unitOfMeasurement = DirectionsCriteria.IMPERIAL
+            }
             Log.d("original location" , location!!.lng.toString()+location!!.lat.toString())
             findRoute(Point.fromLngLat(location.lng, location.lat))
 //            binding.mapView.gestures.addOnMapLongClickListener { point ->
@@ -462,6 +469,8 @@ class BirdNavigationActivity : AppCompatActivity() {
         // initialize view interactions
         binding.stop.setOnClickListener {
             clearRouteAndStopNavigation()
+            val intent = Intent(this@BirdNavigationActivity, HomeActivity::class.java)
+            startActivity(intent)
         }
         binding.recenter.setOnClickListener {
             navigationCamera.requestNavigationCameraToFollowing()
@@ -564,7 +573,7 @@ class BirdNavigationActivity : AppCompatActivity() {
                 .applyDefaultNavigationOptions()
                 .applyLanguageAndVoiceUnitOptions(this)
                 .coordinatesList(listOf(originPoint, destination))
-                .voiceUnits(DirectionsCriteria.METRIC)
+                .voiceUnits(unitOfMeasurement)
                 // provide the bearing for the origin of the request to ensure
                 // that the returned route faces in the direction of the current user movement
                 .bearingsList(
@@ -582,7 +591,8 @@ class BirdNavigationActivity : AppCompatActivity() {
                 .build(),
                 object : NavigationRouterCallback {
                 override fun onCanceled(routeOptions: RouteOptions, routerOrigin: RouterOrigin) {
-                    // no impl
+                    val intent = Intent(this@BirdNavigationActivity, HomeActivity::class.java)
+                    startActivity(intent)
                 }
 
                 override fun onFailure(reasons: List<RouterFailure>, routeOptions: RouteOptions) {

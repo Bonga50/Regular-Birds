@@ -9,6 +9,9 @@ object BirdHotspots {
     var userLatitude:Double=0.0;
     var userLongitude:Double=0.0;
 
+    private var maxDistance: Int = 10
+    private var unitOfMeasurement: String = "Metric"
+
     // Method to add a location to the list
     fun addLocation(location: Locations) {
         locationsList.add(location)
@@ -58,6 +61,21 @@ object BirdHotspots {
 
     fun getUserOriginLocation(): Pair<Double, Double> {
         return Pair(userLongitude, userLatitude)
+    }
+    fun getMaxDistance(): Int {
+        return maxDistance
+    }
+
+    fun setMaxDistance(maxDistance: Int) {
+        this.maxDistance = maxDistance
+    }
+
+    fun getUnitOfMeasurement(): String {
+        return unitOfMeasurement
+    }
+
+    fun setUnitOfMeasurement(unitOfMeasurement: String) {
+        this.unitOfMeasurement = unitOfMeasurement
     }
 
 

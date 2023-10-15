@@ -114,6 +114,7 @@ class HomeFragment : Fragment(){
         var btnRecenter = view.findViewById<ImageView>(R.id.btnRecenter)
         latitude=0.0;
         longitude=0.0;
+
         // Check for location permission
         if (ContextCompat.checkSelfPermission(
                 requireContext(),
@@ -177,7 +178,9 @@ class HomeFragment : Fragment(){
     }
 
     fun hotspots(latitude: Double, longitude: Double) {
-        val radius = 50 // 10 kilometers
+        BirdHotspots.clearLocations()
+        val radius = BirdHotspots.getMaxDistance()
+
         BirdHotspots.resetIdCount()
         hotspotInterface.getHotspots(apiKey,latitude, longitude, radius)
             .enqueue(object : Callback<List<Locations>> {
@@ -189,7 +192,9 @@ class HomeFragment : Fragment(){
                             BirdHotspots.addLocation(i)
                         }
                          location = BirdHotspots.locationsList
-                         createMarker()
+                         if (isAdded) {
+                             createMarker()
+                         }
                     }
                 }
 
@@ -226,6 +231,7 @@ class HomeFragment : Fragment(){
 
     fun clearAnotations(){
         markerList= ArrayList()
+
         pointAnnotationManager?.deleteAll()
     }
 
