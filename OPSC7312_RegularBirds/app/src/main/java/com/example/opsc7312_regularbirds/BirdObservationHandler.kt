@@ -9,6 +9,8 @@ object BirdObservationHandler {
         BirdObservationModel(4, "Observation 4","10/14/2023",-71.0589, 42.3601,"User1"),
         BirdObservationModel(5, "Observation 5","10/14/2023",-75.1652, 39.9526,"User1")
     )
+    private var selectedObservation: BirdObservationModel? = null
+
     //Add new Bird observation
     fun addObservation(observation: BirdObservationModel) {
         observations.add(observation)
@@ -28,6 +30,21 @@ object BirdObservationHandler {
             existingObservation.userLocationLongitude = updatedObservation.userLocationLongitude
             existingObservation.userLocationLatitude = updatedObservation.userLocationLatitude
         }
+    }
+
+    //Method that creates an id based on the number of items in a list
+    fun generateObservationId(): Int {
+        return observations.size + 1
+    }
+
+    //this will get the selected obsevation
+    fun getSelectedObservation(): BirdObservationModel? {
+        return selectedObservation
+    }
+
+    //Method to set the selected observation
+    fun setSelectedObservation(observation: BirdObservationModel) {
+        this.selectedObservation = observation
     }
 
 

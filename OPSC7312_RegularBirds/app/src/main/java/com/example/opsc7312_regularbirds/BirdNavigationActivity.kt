@@ -264,8 +264,10 @@ class BirdNavigationActivity : AppCompatActivity() {
                 Toast.makeText(
                     this@BirdNavigationActivity,
                     error.errorMessage,
+
                     Toast.LENGTH_SHORT
                 ).show()
+                Log.d("manuver error",error.errorMessage.toString())
             },
             {
                 binding.maneuverView.visibility = View.VISIBLE

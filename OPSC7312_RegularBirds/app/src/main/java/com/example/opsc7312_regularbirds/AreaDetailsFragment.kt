@@ -34,7 +34,10 @@ class AreaDetailsFragment : Fragment(), RVadapter_NearByHotspots.OnItemClickList
     }
 
     override fun OnItemClick(itemId: Int) {
-        TODO("Not yet implemented")
+        val bottomSheet = Popup_hotspotdetailsFragment()
+        BirdHotspots.setSelectedHotspot(itemId)
+        bottomSheet.show(getChildFragmentManager(), "MyBottomSheet")
+        BirdHotspots.setUserOriginLocation(BirdHotspots.userLatitude,BirdHotspots.userLongitude)
     }
 
 

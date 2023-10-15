@@ -82,6 +82,7 @@ class HomeFragment : Fragment(){
             latitude = it.latitude()
             longitude = it.longitude()
             hotspots(latitude,longitude)
+            BirdHotspots.setUserOriginLocation(latitude,longitude)
         }
 
         mapView.gestures.focalPoint = mapView.getMapboxMap().pixelForCoordinate(it)
