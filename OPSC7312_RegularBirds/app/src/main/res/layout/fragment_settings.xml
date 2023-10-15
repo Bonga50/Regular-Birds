@@ -53,7 +53,9 @@
             android:id="@+id/lblSettingsMaxDistance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
+            android:layout_gravity="start"
+            android:gravity="start"
+            android:layout_weight="1"
             android:text="Travel Distance"
             android:textSize="18dp"
             android:padding="20dp"/>
@@ -62,7 +64,8 @@
             android:id="@+id/lblSettingsMaxNumber"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
+            android:layout_gravity="end"
+            android:gravity="end"
             android:text="[number]"
             android:textSize="18dp"
             android:padding="20dp"/>

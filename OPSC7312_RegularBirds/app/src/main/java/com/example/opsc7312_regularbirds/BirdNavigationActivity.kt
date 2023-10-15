@@ -8,6 +8,7 @@ import android.content.res.Resources
 import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
@@ -449,7 +450,9 @@ class BirdNavigationActivity : AppCompatActivity() {
         // load map style
         binding.mapView.getMapboxMap().loadStyleUri(NavigationStyles.NAVIGATION_DAY_STYLE) {
             // add long click listener that search for a route to the clicked destination
-            findRoute(Point.fromLngLat(-122.4194, 37.7749))
+            val location = BirdHotspots.obtainSelectedLocation()
+            Log.d("original location" , location!!.lng.toString()+location!!.lat.toString())
+            findRoute(Point.fromLngLat(location.lng, location.lat))
 //            binding.mapView.gestures.addOnMapLongClickListener { point ->
 //                findRoute(point)
 //                true
@@ -530,11 +533,13 @@ class BirdNavigationActivity : AppCompatActivity() {
         replayOriginLocation()
     }
     private fun replayOriginLocation() {
+        val location = BirdHotspots.getUserOriginLocation()
+        Log.d("original location" , location.first.toString()+location.second.toString())
         mapboxReplayer.pushEvents(
             listOf(
                 ReplayRouteMapper.mapToUpdateLocation(
                     Date().time.toDouble(),
-                    Point.fromLngLat(-122.39726512303575, 37.785128345296805)
+                    Point.fromLngLat(location.first, location.second)
                 )
             )
         )
@@ -543,6 +548,7 @@ class BirdNavigationActivity : AppCompatActivity() {
     }
 
     private fun findRoute(destination: Point) {
+        val location = BirdHotspots.getUserOriginLocation()
         val originLocation = navigationLocationProvider.lastLocation
         val originPoint = originLocation?.let {
             Point.fromLngLat(it.longitude, it.latitude)
