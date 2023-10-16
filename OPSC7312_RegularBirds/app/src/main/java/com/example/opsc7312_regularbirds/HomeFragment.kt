@@ -5,6 +5,8 @@ import android.Manifest
 import android.app.AlertDialog
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
+import android.icu.text.DecimalFormat
+import android.icu.text.DecimalFormatSymbols
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -40,6 +42,7 @@ import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.Locale
 
 
 class HomeFragment : Fragment(){
@@ -60,6 +63,7 @@ class HomeFragment : Fragment(){
     private lateinit var mapView:MapView
     private lateinit var mapboxMap: MapboxMap
     private  val MY_PERMISSIONS_REQUEST_LOCATION = 99
+    private val decimalFormat = DecimalFormat("0.###", DecimalFormatSymbols.getInstance(Locale.US))
 
 
     val listener = OnCameraChangeListener { cameraChangedEventData ->
@@ -72,15 +76,19 @@ class HomeFragment : Fragment(){
             bearing=it;
             mapView.getMapboxMap().setCamera(CameraOptions.Builder().center(Point.fromLngLat(longitude,latitude)).build())
         }
-            mapView.getMapboxMap().setCamera(CameraOptions.Builder().bearing(it).build())
+           // mapView.getMapboxMap().setCamera(CameraOptions.Builder().bearing(it).build())
 
     }
 
     private val onIndicatorPositionChangedListener = OnIndicatorPositionChangedListener {
         Log.d("Location ", it.latitude().toString())
-        if (  latitude!=it.latitude() && longitude!=it.longitude()){
-            latitude = it.latitude()
-            longitude = it.longitude()
+        if (  latitude!= decimalFormat.format(it.latitude()).toDouble() &&
+            longitude!= decimalFormat.format(it.longitude()).toDouble()){
+
+            latitude = decimalFormat.format(it.latitude()).toDouble()
+            longitude = decimalFormat.format(it.longitude()).toDouble()
+
+
             hotspots(latitude,longitude)
             BirdHotspots.setUserOriginLocation(latitude,longitude)
         }
@@ -154,7 +162,7 @@ class HomeFragment : Fragment(){
         )
         pointAnnotationManager = annotationApi?.createPointAnnotationManager(annotationConfig)
         // Add the listener to the map
-        mapboxMap.addOnCameraChangeListener(listener)
+        //mapboxMap.addOnCameraChangeListener(listener)
 
         // Pass the user's location to camera
 

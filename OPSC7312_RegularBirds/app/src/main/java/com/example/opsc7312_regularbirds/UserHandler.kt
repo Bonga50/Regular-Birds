@@ -14,6 +14,22 @@ object UserHandler {
         users.add(user)
     }
 
+    fun addElementToList(username: String, password: String) {
+        users.add(UserModel(username, password))
+    }
+
+    /*fun getUserByUsername(username: String, password): UserModel? {
+
+        var condition : Boolean;
+
+        users.forEach{element ->
+            if(element.username == username &&
+                element.password == password) {
+                condition = true;
+
+            }
+        }
+    }*/
     fun getUserByUsername(username: String): UserModel? {
         return users.find { it.username == username }
     }
