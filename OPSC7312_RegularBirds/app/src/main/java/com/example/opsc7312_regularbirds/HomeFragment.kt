@@ -15,6 +15,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.example.opsc7312_regularbirds.BirdObservationHandler.observations
 import com.google.gson.Gson
 import com.google.gson.JsonElement
 import com.mapbox.android.gestures.MoveGestureDetector
@@ -57,6 +58,7 @@ class HomeFragment : Fragment(){
     var markerList : ArrayList<PointAnnotationOptions> = ArrayList()
     var pointAnnotationManager: PointAnnotationManager?=null
     var location = mutableListOf<Locations>()
+    var hotspotsList = mutableListOf<BirdObservationModel>()
     var latitude:Double=0.0;
     var longitude:Double=0.0;
     var bearing:Double=-1.0;
@@ -90,6 +92,7 @@ class HomeFragment : Fragment(){
 
 
             hotspots(latitude,longitude)
+           //userHotspots()
             BirdHotspots.setUserOriginLocation(latitude,longitude)
         }
 
@@ -139,9 +142,10 @@ class HomeFragment : Fragment(){
         //getting the map
         mapView = view.findViewById(R.id.mapView);
         mapboxMap = mapView.getMapboxMap()
-        val bitmap = BitmapFactory.decodeResource(resources, R.drawable.mapbox_marker_icon_blue)
-        markerWidth = bitmap.width
-        markerHeight = bitmap.height
+        val bitmapImage = BitmapFactory.decodeResource(resources, R.drawable.mapbox_marker_icon_blue)
+        markerWidth = bitmapImage.width
+        markerHeight = bitmapImage.height
+
         hotspotInterface = Hotspots.createEBirdService()
         viewAnnotationManager = mapView.viewAnnotationManager
         mapView.getMapboxMap().loadStyleUri(
@@ -213,6 +217,17 @@ class HomeFragment : Fragment(){
             })
     }
 
+    /*fun userHotspots() {
+        hotspotsList.clear() // Clear the existing hotspots
+        val locationsList = BirdHotspots.locationsList // Assuming this is a valid list of Locations
+
+        if (isAdded) {
+            createMarkerUserObser()
+        }
+    }*/
+
+
+
     override fun onStart() {
         super.onStart()
         mapView?.onStart()
@@ -265,6 +280,28 @@ class HomeFragment : Fragment(){
         pointAnnotationManager?.create(markerList);
 
     }
+
+    /*private fun createMarkerUserObser(){
+        clearAnotations()
+        pointAnnotationManager?.addClickListener(OnPointAnnotationClickListener {
+                annotation: PointAnnotation ->  onMarkerClick(annotation)
+            true
+        })
+        val bitmapImage = BitmapFactory.decodeResource(resources, R.drawable.red_icon)
+
+        for (i in hotspotsList){
+            var jsonObject = JSONObject();
+            jsonObject.put("ID",i.observationId.toString())
+            val pointAnnotationOptions: PointAnnotationOptions = PointAnnotationOptions()
+                .withPoint(Point.fromLngLat(i.userLocationLongitude, i.userLocationLatitude))
+                .withData(Gson().fromJson(jsonObject.toString(), JsonElement::class.java))
+                .withIconImage(bitmapImage)
+
+            markerList.add(pointAnnotationOptions)
+        }
+        pointAnnotationManager?.create(markerList);
+
+    }*/
 
     fun onMarkerClick(marker: PointAnnotation) {
         var jsonelement:JsonElement? =marker.getData()
