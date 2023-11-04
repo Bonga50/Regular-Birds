@@ -56,7 +56,9 @@ class HomeFragment : Fragment(){
     private lateinit var annotationConfig: AnnotationConfig
     var layerIDD = "map_annotation"
     var markerList : ArrayList<PointAnnotationOptions> = ArrayList()
+    var userMarkerList : ArrayList<PointAnnotationOptions> = ArrayList()
     var pointAnnotationManager: PointAnnotationManager?=null
+    var userPointAnnotationManager: PointAnnotationManager?=null
     var location = mutableListOf<Locations>()
     var hotspotsList = mutableListOf<BirdObservationModel>()
     var latitude:Double=0.0;
@@ -92,7 +94,8 @@ class HomeFragment : Fragment(){
 
 
             hotspots(latitude,longitude)
-           //userHotspots()
+
+
             BirdHotspots.setUserOriginLocation(latitude,longitude)
         }
 
@@ -142,10 +145,6 @@ class HomeFragment : Fragment(){
         //getting the map
         mapView = view.findViewById(R.id.mapView);
         mapboxMap = mapView.getMapboxMap()
-        val bitmapImage = BitmapFactory.decodeResource(resources, R.drawable.mapbox_marker_icon_blue)
-        markerWidth = bitmapImage.width
-        markerHeight = bitmapImage.height
-
         hotspotInterface = Hotspots.createEBirdService()
         viewAnnotationManager = mapView.viewAnnotationManager
         mapView.getMapboxMap().loadStyleUri(
@@ -165,9 +164,10 @@ class HomeFragment : Fragment(){
             layerId =layerIDD
         )
         pointAnnotationManager = annotationApi?.createPointAnnotationManager(annotationConfig)
+        userPointAnnotationManager = annotationApi?.createPointAnnotationManager(annotationConfig)
         // Add the listener to the map
         //mapboxMap.addOnCameraChangeListener(listener)
-
+        userHotspots()
         // Pass the user's location to camera
 
         mapView.location.addOnIndicatorPositionChangedListener(onIndicatorPositionChangedListener)
@@ -217,14 +217,14 @@ class HomeFragment : Fragment(){
             })
     }
 
-    /*fun userHotspots() {
-        hotspotsList.clear() // Clear the existing hotspots
-        val locationsList = BirdHotspots.locationsList // Assuming this is a valid list of Locations
+    fun userHotspots() {
+        //hotspotsList.clear() // Clear the existing hotspots
+        hotspotsList = BirdObservationHandler.observations // Assuming this is a valid list of Locations
 
         if (isAdded) {
             createMarkerUserObser()
         }
-    }*/
+    }
 
 
 
@@ -259,8 +259,14 @@ class HomeFragment : Fragment(){
         pointAnnotationManager?.deleteAll()
     }
 
+    fun clearUserAnotations(){
+        userMarkerList= ArrayList()
+
+        userPointAnnotationManager?.deleteAll()
+    }
+
     private fun createMarker(){
-        clearAnotations()
+        //clearAnotations()
         pointAnnotationManager?.addClickListener(OnPointAnnotationClickListener {
                 annotation: PointAnnotation ->  onMarkerClick(annotation)
             true
@@ -281,13 +287,13 @@ class HomeFragment : Fragment(){
 
     }
 
-    /*private fun createMarkerUserObser(){
-        clearAnotations()
-        pointAnnotationManager?.addClickListener(OnPointAnnotationClickListener {
-                annotation: PointAnnotation ->  onMarkerClick(annotation)
+    private fun createMarkerUserObser(){
+        //clearUserAnotations()
+        /*userPointAnnotationManager?.addClickListener(OnPointAnnotationClickListener {
+                //annotation: PointAnnotation ->  onMarkerClick(annotation)
             true
-        })
-        val bitmapImage = BitmapFactory.decodeResource(resources, R.drawable.red_icon)
+        })*/
+        val bitmapImage = BitmapFactory.decodeResource(resources, R.drawable.mapbox_marker_icon_red)
 
         for (i in hotspotsList){
             var jsonObject = JSONObject();
@@ -296,12 +302,10 @@ class HomeFragment : Fragment(){
                 .withPoint(Point.fromLngLat(i.userLocationLongitude, i.userLocationLatitude))
                 .withData(Gson().fromJson(jsonObject.toString(), JsonElement::class.java))
                 .withIconImage(bitmapImage)
-
-            markerList.add(pointAnnotationOptions)
+            userMarkerList.add(pointAnnotationOptions)
         }
-        pointAnnotationManager?.create(markerList);
-
-    }*/
+        userPointAnnotationManager?.create(userMarkerList);
+    }
 
     fun onMarkerClick(marker: PointAnnotation) {
         var jsonelement:JsonElement? =marker.getData()
@@ -322,6 +326,3 @@ class HomeFragment : Fragment(){
 
 
 }
-
-
-
