@@ -42,7 +42,7 @@ class BirdListFragment : Fragment(), RVadapter_Observations.OnItemClickListener 
         return view
     }
 
-    override fun OnItemClick(itemId: Int) {
+    override fun OnItemClick(itemId: String) {
         val bottomSheet = Popup_ObservationDetails()
         BirdObservationHandler.setSelectedObservation(BirdObservationHandler.getObservationById(itemId)!!)
         bottomSheet.show(getChildFragmentManager(), "MyBottomSheet")

@@ -35,7 +35,7 @@ class AddNewObservationFragment : Fragment() {
                 BirdObservationHandler.addObservation(
                     BirdObservationModel(
                         observationId=BirdObservationHandler.generateObservationId(),
-                        observationName= txtBirdName.text.toString(),
+                        observationName= "Observation "+txtBirdName.text.toString(),
                         observationDate= LocalDate.now().toString(),
                         userLocationLongitude = BirdHotspots.userLongitude,
                         userLocationLatitude = BirdHotspots.userLatitude,
