@@ -193,6 +193,7 @@ class HomeFragment : Fragment(){
     fun hotspots(latitude: Double, longitude: Double) {
         BirdHotspots.clearLocations()
         val radius = BirdHotspots.getMaxDistance()
+        hotspotsList = BirdObservationHandler.observations // Assuming this is a valid list of Locations
 
         BirdHotspots.resetIdCount()
         hotspotInterface.getHotspots(apiKey,latitude, longitude, radius)
@@ -222,7 +223,7 @@ class HomeFragment : Fragment(){
         hotspotsList = BirdObservationHandler.observations // Assuming this is a valid list of Locations
 
         if (isAdded) {
-            createMarkerUserObser()
+            //createMarkerUserObser()
         }
     }
 
@@ -255,8 +256,11 @@ class HomeFragment : Fragment(){
 
     fun clearAnotations(){
         markerList= ArrayList()
+        userMarkerList= ArrayList()
 
         pointAnnotationManager?.deleteAll()
+        userPointAnnotationManager?.deleteAll()
+
     }
 
     fun clearUserAnotations(){
@@ -271,7 +275,9 @@ class HomeFragment : Fragment(){
                 annotation: PointAnnotation ->  onMarkerClick(annotation)
             true
         })
+
         val bitmapImage = BitmapFactory.decodeResource(resources, R.drawable.mapbox_marker_icon_blue)
+        val bitmapImage2 = BitmapFactory.decodeResource(resources, R.drawable.mapbox_marker_icon_red)
 
         for (i in location){
             var jsonObject = JSONObject();
@@ -283,12 +289,23 @@ class HomeFragment : Fragment(){
 
             markerList.add(pointAnnotationOptions)
         }
+        for (i in hotspotsList){
+            var jsonObject = JSONObject();
+            jsonObject.put("ID",i.observationId.toString())
+            val pointAnnotationOptions: PointAnnotationOptions = PointAnnotationOptions()
+                .withPoint(Point.fromLngLat(i.userLocationLongitude, i.userLocationLatitude))
+                .withData(Gson().fromJson(jsonObject.toString(), JsonElement::class.java))
+                .withIconImage(bitmapImage2)
+            markerList.add(pointAnnotationOptions)
+        }
+
+
         pointAnnotationManager?.create(markerList);
 
     }
 
     private fun createMarkerUserObser(){
-        //clearUserAnotations()
+        clearUserAnotations()
         /*userPointAnnotationManager?.addClickListener(OnPointAnnotationClickListener {
                 //annotation: PointAnnotation ->  onMarkerClick(annotation)
             true
@@ -317,9 +334,16 @@ class HomeFragment : Fragment(){
 //            .setPositiveButton("OK"){
 //                dialog,whichButton->dialog.dismiss()
 //            }.show()
-        val bottomSheet = Popup_hotspotdetailsFragment()
-        BirdHotspots.setSelectedHotspot(value.toInt())
-        bottomSheet.show(getChildFragmentManager(), "MyBottomSheet")
+        if(value.contains("Obsv")){
+            BirdObservationHandler.setSelectedObservation(
+                BirdObservationHandler.getObservationById(value)!!)
+            val bottomSheet = Popup_ObservationDetails()
+            bottomSheet.show(getChildFragmentManager(), "MyBottomSheet")
+        }else {
+            val bottomSheet = Popup_hotspotdetailsFragment()
+            BirdHotspots.setSelectedHotspot(value.toInt())
+            bottomSheet.show(getChildFragmentManager(), "MyBottomSheet")
+        }
         BirdHotspots.setUserOriginLocation(latitude,longitude)
     }
 

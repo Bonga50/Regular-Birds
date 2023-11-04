@@ -40,7 +40,7 @@ class RVadapter_Observations(var observationView: List<BirdObservationModel>) : 
 
     }
     interface OnItemClickListener {
-        fun OnItemClick(itemId: Int)
+        fun OnItemClick(itemId: String)
     }
     fun setFilteredList(mList: List<BirdObservationModel>){
         this.observationView = mList

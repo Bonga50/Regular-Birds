@@ -3,11 +3,11 @@ package com.example.opsc7312_regularbirds
 object BirdObservationHandler {
 
     val observations = mutableListOf<BirdObservationModel>(
-        BirdObservationModel(1, "Observation 1","10/14/2023",-77.0369, 38.9072,"User1"),
-        BirdObservationModel(2, "Observation 2","10/14/2023",-122.4194, 37.7749,"User1"),
-        BirdObservationModel(3, "Observation 3","10/14/2023",-84.3879, 33.7490,"User1"),
-        BirdObservationModel(4, "Observation 4","10/14/2023",-71.0589, 42.3601,"User1"),
-        BirdObservationModel(5, "Observation 5","10/14/2023",-75.1652, 39.9526,"User1")
+        BirdObservationModel("Obsv1", "Observation 1","10/14/2023",-77.0369, 38.9072,"User1"),
+        BirdObservationModel("Obsv2", "Observation 2","10/14/2023",-122.4194, 37.7749,"User1"),
+        BirdObservationModel("Obsv3", "Observation 3","10/14/2023",-84.3879, 33.7490,"User1"),
+        BirdObservationModel("Obsv4", "Observation 4","10/14/2023",-71.0589, 42.3601,"User1"),
+        BirdObservationModel("Obsv5", "Observation 5","10/14/2023",-75.1652, 39.9526,"User1")
     )
     private var selectedObservation: BirdObservationModel? = null
 
@@ -17,12 +17,12 @@ object BirdObservationHandler {
     }
 
     // Method to get an observation by its ID
-    fun getObservationById(observationId: Int): BirdObservationModel? {
+    fun getObservationById(observationId: String): BirdObservationModel? {
         return observations.find { it.observationId == observationId }
     }
 
     // Method to update an observation by its ID
-    fun updateObservationById(observationId: Int, updatedObservation: BirdObservationModel) {
+    fun updateObservationById(observationId: String, updatedObservation: BirdObservationModel) {
         val existingObservation = getObservationById(observationId)
         if (existingObservation != null) {
             // Update the observation with the provided data
@@ -33,8 +33,8 @@ object BirdObservationHandler {
     }
 
     //Method that creates an id based on the number of items in a list
-    fun generateObservationId(): Int {
-        return observations.size + 1
+    fun generateObservationId(): String {
+        return "Obsv"+(observations.size + 1)
     }
 
     //this will get the selected obsevation
