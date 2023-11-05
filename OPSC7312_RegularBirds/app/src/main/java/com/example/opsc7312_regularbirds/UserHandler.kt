@@ -1,5 +1,12 @@
 package com.example.opsc7312_regularbirds
 
+import android.content.ContentValues.TAG
+import android.util.Log
+import android.widget.Toast
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+
 object UserHandler {
 
     private val users = mutableListOf<UserModel>(
@@ -46,5 +53,9 @@ object UserHandler {
     fun setVerifiedUser(username: String) {
         this.verifiedUser = username
     }
+    fun removeWhitespaces(input: String): String {
+        return input.replace("\\s".toRegex(), "")
+    }
+
 
 }

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "359541238437",
+    "project_id": "real-birds-app",
+    "storage_bucket": "real-birds-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:359541238437:android:257456d85705bc2edabb4c",
+        "android_client_info": {
+          "package_name": "com.example.opsc7312_regularbirds"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAg2ClwohhdjLe5MuCKEcLLfFlSRSNEz2I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
