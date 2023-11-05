@@ -10,6 +10,9 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.opsc7312_regularbirds.UserHandler
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 class MainActivity : AppCompatActivity() {
     private lateinit var usernameEditText: EditText
@@ -20,10 +23,11 @@ class MainActivity : AppCompatActivity() {
     var userMod = UserHandler;
 
     private lateinit var bottomNavigationView: BottomNavigationView
-
+    private lateinit var firebaseAuth: FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+        firebaseAuth = Firebase.auth
         usernameEditText = findViewById(R.id.txtUsername)
         passwordEditText = findViewById(R.id.txtPassword)
         loginButton = findViewById(R.id.btnLogin)
@@ -34,25 +38,28 @@ class MainActivity : AppCompatActivity() {
         loginButton.setOnClickListener {
             val intent = Intent(this, HomeActivity::class.java)
 
-            val username = usernameEditText.text.toString()
+            var username = usernameEditText.text.toString()
             val password = passwordEditText.text.toString()
+            username = UserHandler.removeWhitespaces(username)
 
-            val user = UserHandler.getUserByUsername(username)
+            //val user = UserHandler.getUserByUsername(username)
+            firebaseAuth.signInWithEmailAndPassword(username,password).addOnCompleteListener {
+                // authentication performed here
+                if (it.isSuccessful) {
+                    // the home class is yet to be created so the error will be there
+                    // seeing as the home activity class has not been created yet, when logging in, it will just display
+                    // failed or successful message.
+                    val intent = Intent(this, HomeActivity::class.java)
 
-            // authentication performed here
-            if (user != null && user.password == password) {
-                // the home class is yet to be created so the error will be there
-                // seeing as the home activity class has not been created yet, when logging in, it will just display
-                // failed or successful message.
-                val intent = Intent(this, HomeActivity::class.java)
+                    startActivity(intent)
+                    Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show()
+                } else {
 
-                startActivity(intent)
-                Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show()
-            } else {
+                    Toast.makeText(this, "Invalid credentials", Toast.LENGTH_SHORT).show()
 
-                Toast.makeText(this, "Invalid credentials", Toast.LENGTH_SHORT).show()
-
+                }
             }
+
         }
 
         signUpTextView.setOnClickListener{
