@@ -335,13 +335,16 @@ class HomeFragment : Fragment(){
 //                dialog,whichButton->dialog.dismiss()
 //            }.show()
         if(value.contains("Obsv")){
-            BirdObservationHandler.setSelectedObservation(
-                BirdObservationHandler.getObservationById(value)!!)
+            val x = BirdObservationHandler.getObservationById(value)
+            BirdObservationHandler.setSelectedObservation(x!!)
+            BirdHotspots.setDistentOriginLocation(x!!.userLocationLatitude,x!!.userLocationLongitude)
             val bottomSheet = Popup_ObservationDetails()
             bottomSheet.show(getChildFragmentManager(), "MyBottomSheet")
         }else {
             val bottomSheet = Popup_hotspotdetailsFragment()
-            BirdHotspots.setSelectedHotspot(value.toInt())
+            val y = BirdHotspots.getLocationByObsvId(value.toInt())
+            BirdHotspots.setDistentOriginLocation(y!!.lat,y!!.lng)
+
             bottomSheet.show(getChildFragmentManager(), "MyBottomSheet")
         }
         BirdHotspots.setUserOriginLocation(latitude,longitude)

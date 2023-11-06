@@ -453,15 +453,15 @@ class BirdNavigationActivity : AppCompatActivity() {
         // load map style
         binding.mapView.getMapboxMap().loadStyleUri(NavigationStyles.NAVIGATION_DAY_STYLE) {
             // add long click listener that search for a route to the clicked destination
-            val location = BirdHotspots.obtainSelectedLocation()
+            val location = BirdHotspots.getDistenation()
             //Checking the unit od measurement
             if (BirdHotspots.getUnitOfMeasurement().equals("Metric")) {
                 unitOfMeasurement = DirectionsCriteria.METRIC
             }else{
                 unitOfMeasurement = DirectionsCriteria.IMPERIAL
             }
-            Log.d("original location" , location!!.lng.toString()+location!!.lat.toString())
-            findRoute(Point.fromLngLat(location.lng, location.lat))
+            Log.d("original location" , location!!.first.toString()+location!!.second.toString())
+            findRoute(Point.fromLngLat(location.first, location.second))
 //            binding.mapView.gestures.addOnMapLongClickListener { point ->
 //                findRoute(point)
 //                true
