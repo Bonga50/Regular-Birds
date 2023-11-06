@@ -9,6 +9,9 @@ object BirdHotspots {
     var userLatitude:Double=0.0;
     var userLongitude:Double=0.0;
 
+    var disLatitude:Double=0.0;
+    var disLongitude:Double=0.0;
+
     private var maxDistance: Int = 10
     private var unitOfMeasurement: String = "Metric"
 
@@ -61,6 +64,14 @@ object BirdHotspots {
 
     fun getUserOriginLocation(): Pair<Double, Double> {
         return Pair(userLongitude, userLatitude)
+    }
+
+    fun setDistentOriginLocation(latitude: Double, longitude: Double) {
+        disLatitude = latitude
+        disLongitude = longitude
+    }
+    fun getDistenation(): Pair<Double, Double>{
+        return Pair(disLongitude, disLatitude)
     }
     fun getMaxDistance(): Int {
         return maxDistance

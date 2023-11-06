@@ -3,11 +3,11 @@ package com.example.opsc7312_regularbirds
 object BirdObservationHandler {
 
     val observations = mutableListOf<BirdObservationModel>(
-        BirdObservationModel("Obsv1", "Observation 1","10/14/2023",-77.0369, 38.9072,"User1"),
-        BirdObservationModel("Obsv2", "Observation 2","10/14/2023",-122.4194, 37.7749,"User1"),
-        BirdObservationModel("Obsv3", "Observation 3","10/14/2023",-84.3879, 33.7490,"User1"),
-        BirdObservationModel("Obsv4", "Observation 4","10/14/2023",-71.0589, 42.3601,"User1"),
-        BirdObservationModel("Obsv5", "Observation 5","10/14/2023",-75.1652, 39.9526,"User1")
+        BirdObservationModel("Obsv1", "Observation 1","10/14/2023",22.0369, -23.9072,"User1"),
+        BirdObservationModel("Obsv2", "Observation 2","10/14/2023",28.4194, -22.7749,"User1"),
+        BirdObservationModel("Obsv3", "Observation 3","10/14/2023",84.3879, -23.7490,"User1"),
+        BirdObservationModel("Obsv4", "Observation 4","10/14/2023",51.0589, -22.3601,"User1"),
+        BirdObservationModel("Obsv5", "Observation 5","10/14/2023",35.1652, -22.9526,"User1")
     )
     private var selectedObservation: BirdObservationModel? = null
 
