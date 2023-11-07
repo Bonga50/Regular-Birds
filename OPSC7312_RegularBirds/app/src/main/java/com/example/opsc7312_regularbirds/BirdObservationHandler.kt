@@ -47,6 +47,12 @@ object BirdObservationHandler {
         return "Obsv"+(userDataX.size + 1)
     }
 
+    //function to get images
+    fun getEntryImage(entryId: String): entryImages {
+        var uplodedImage: entryImages = imageList.find { it.EntryId == entryId }!!
+        return uplodedImage
+    }
+
     //this will get the selected obsevation
     fun getSelectedObservation(): BirdObservationModel? {
         return selectedObservation
