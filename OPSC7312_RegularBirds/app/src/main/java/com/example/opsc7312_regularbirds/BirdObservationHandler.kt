@@ -79,8 +79,8 @@ object BirdObservationHandler {
 
         var tempDistinctUser:BirdObservationModel = BirdObservationModel()
 
-        db.collection("dataUser")
-            .whereEqualTo("userID",UserHandler.getVerifiedUser())
+        db.collection("Observations")
+            .whereEqualTo("usserId",UserHandler.getVerifiedUser())
             .get()
             .addOnSuccessListener { documents ->
                 for (document in documents) {
