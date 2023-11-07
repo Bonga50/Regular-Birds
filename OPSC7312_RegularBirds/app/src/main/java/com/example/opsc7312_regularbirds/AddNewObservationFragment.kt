@@ -15,6 +15,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.lifecycle.lifecycleScope
 import java.time.LocalDate
 import java.util.Date
 import com.google.firebase.appcheck.ktx.appCheck
@@ -28,6 +29,7 @@ import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.StorageTask
 import com.google.firebase.storage.UploadTask
 import com.squareup.picasso.Picasso
+import kotlinx.coroutines.launch
 
 class AddNewObservationFragment : Fragment() {
 
@@ -38,13 +40,14 @@ class AddNewObservationFragment : Fragment() {
     private var imgUri: Uri? = null;
     private lateinit var firebaseFirestore: FirebaseFirestore
     private val PICK_IMAGE_REQUEST = 1
-
+    private lateinit var id:String
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        id =BirdObservationHandler.generateObservationId()
         // Inflate the layout for this fragment
         var view = inflater.inflate(R.layout.fragment_add_new_observation, container, false)
 
@@ -63,6 +66,7 @@ class AddNewObservationFragment : Fragment() {
         )
         btnClear.setOnClickListener {
             txtBirdName.setText("")
+            imageView.setImageDrawable(null)
         }
         btnCreateObsrevation.setOnClickListener {
             if (txtBirdName != null) {
@@ -70,24 +74,27 @@ class AddNewObservationFragment : Fragment() {
                     uploadImage()
                     imageUploadURL = "HasImage"
                 }
-                    BirdObservationHandler.addDataCObservationToFirestore(
-                        BirdObservationModel(
-                            observationId = BirdObservationHandler.generateObservationId(),
-                            observationName = "Observation " + txtBirdName.text.toString(),
-                            observationDate = LocalDate.now().toString(),
-                            userLocationLongitude = BirdHotspots.userLongitude,
-                            userLocationLatitude = BirdHotspots.userLatitude,
-                            UserId = UserHandler.getVerifiedUser()!!,
-                            imageData = imageUploadURL
+                var newObserv = BirdObservationModel(
+                    observationId = id,
+                    observationName = "Observation " + txtBirdName.text.toString(),
+                    observationDate = LocalDate.now().toString(),
+                    userLocationLongitude = BirdHotspots.userLongitude,
+                    userLocationLatitude = BirdHotspots.userLatitude,
+                    UserId = UserHandler.getVerifiedUser()!!,
+                    imageData = imageUploadURL
 
-                        )
+                )
+                    BirdObservationHandler.addDataCObservationToFirestore(
+                        newObserv
                     )
 
             }
             // Show a toast message to indicate the data has been added
             Toast.makeText(requireContext(), "Data added successfully", Toast.LENGTH_SHORT).show()
-
-
+            lifecycleScope.launch {
+                BirdObservationHandler.getUserObservationsFromFireStore()
+                BirdObservationHandler.getImagesFromFireStore()
+            }
         }
 
         addPicbutton.setOnClickListener {
@@ -112,7 +119,7 @@ class AddNewObservationFragment : Fragment() {
                         val entryImage = entryImages(
                             uri.toString(),
                             UserHandler.getVerifiedUser()!!,
-                            BirdObservationHandler.generateObservationId()
+                            id
                         )
 
                         Log.d("Image  Url Download", uri.toString())
