@@ -58,7 +58,41 @@
                         android:textColor="@color/black"
                         android:textColorHint="@color/grey" />
 
+
+
+
                 </com.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
+                android:id="@+id/imgbuttonLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_alignParentBottom="true"
+                android:padding="10dp"
+                android:gravity="center">
+                <ImageView
+                    android:id="@+id/imgEntryImage"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_marginRight="80dp"
+                    android:scaleType="centerCrop"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/image_boarder"/>
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnAddPicture"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/black"
+                    android:text="PICTURE"
+                    android:layout_margin="10dp"
+                    android:textColor="@color/design_default_color_secondary"
+                    android:textColorHighlight="@color/design_default_color_secondary"
+                    android:textColorLink="@color/design_default_color_secondary" />
+
+
+            </LinearLayout>
                 <!-- Buttons -->
                 <LinearLayout
                     android:id="@+id/buttonLayout"
