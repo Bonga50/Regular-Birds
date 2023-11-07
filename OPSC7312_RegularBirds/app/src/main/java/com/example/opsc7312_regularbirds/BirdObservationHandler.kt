@@ -1,13 +1,22 @@
 package com.example.opsc7312_regularbirds
 
+import android.util.Log
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
+import kotlinx.coroutines.CompletableDeferred
+
 object BirdObservationHandler {
 
+    lateinit var userDataX : List<BirdObservationModel>
+    lateinit var disticntUserData: BirdObservationModel
+
+
     val observations = mutableListOf<BirdObservationModel>(
-        BirdObservationModel("Obsv1", "Observation 1","10/14/2023",22.0369, -23.9072,"User1"),
-        BirdObservationModel("Obsv2", "Observation 2","10/14/2023",28.4194, -22.7749,"User1"),
-        BirdObservationModel("Obsv3", "Observation 3","10/14/2023",84.3879, -23.7490,"User1"),
-        BirdObservationModel("Obsv4", "Observation 4","10/14/2023",51.0589, -22.3601,"User1"),
-        BirdObservationModel("Obsv5", "Observation 5","10/14/2023",35.1652, -22.9526,"User1")
+        BirdObservationModel("Obsv1", "Observation 1","10/14/2023",22.0369, -23.9072,"User1",""),
+        BirdObservationModel("Obsv2", "Observation 2","10/14/2023",28.4194, -22.7749,"User1",""),
+        BirdObservationModel("Obsv3", "Observation 3","10/14/2023",84.3879, -23.7490,"User1",""),
+        BirdObservationModel("Obsv4", "Observation 4","10/14/2023",51.0589, -22.3601,"User1",""),
+        BirdObservationModel("Obsv5", "Observation 5","10/14/2023",35.1652, -22.9526,"User1","")
     )
     private var selectedObservation: BirdObservationModel? = null
 
@@ -47,5 +56,50 @@ object BirdObservationHandler {
         this.selectedObservation = observation
     }
 
+    //function to create an ID for every entry
+    fun generateEntryId(): Int {
+        var newId: Int
+        newId = observations.size + 100
+        return newId
+    }
 
+
+    //method that will add observations to the firebase
+    fun addDataCObservationToFirestore(dataCategory: BirdObservationModel) {
+        val db = Firebase.firestore
+        db.collection("Observations")
+            .add(dataCategory)
+        }
+
+    //method to get observations for firebase
+    suspend fun getUserdataFromFireStore(): BirdObservationModel {
+        val db = Firebase.firestore
+        val deferred = CompletableDeferred<String>()
+        val userData = mutableListOf<BirdObservationModel>()
+
+        var tempDistinctUser:BirdObservationModel = BirdObservationModel()
+
+        db.collection("dataUser")
+            .whereEqualTo("userID",UserHandler.getVerifiedUser())
+            .get()
+            .addOnSuccessListener { documents ->
+                for (document in documents) {
+                    var entry = document.toObject(BirdObservationModel::class.java)
+                    tempDistinctUser = entry
+                    Log.d("User Data Success", "User data: " + document.id)
+                }
+
+                deferred.complete("Success")
+            }
+            .addOnFailureListener { exception ->
+                Log.d("Error", "Error getting documents: " + exception.toString())
+                deferred.complete("Failed")
+            }
+
+        val result = deferred.await()
+        Log.d("Success", "Getting result: " + result.toString())
+        userDataX = userData
+        disticntUserData = tempDistinctUser
+        return disticntUserData
+    }
 }

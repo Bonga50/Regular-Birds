@@ -55,7 +55,11 @@ dependencies {
     implementation "com.mapbox.navigation:android:2.10.1"
     implementation(platform("com.google.firebase:firebase-bom:32.5.0"))
     implementation("com.google.firebase:firebase-auth")
-
+    implementation 'com.google.firebase:firebase-firestore-ktx:24.6.1'
+    implementation 'com.google.firebase:firebase-storage-ktx:20.2.1'
+    implementation("com.google.firebase:firebase-appcheck-playintegrity")
+    implementation("com.google.firebase:firebase-appcheck-ktx")
+    implementation 'com.squareup.picasso:picasso:2.71828'
 
     //Retrofit API implementation.
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'

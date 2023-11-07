@@ -49,6 +49,7 @@ class MainActivity : AppCompatActivity() {
                     // the home class is yet to be created so the error will be there
                     // seeing as the home activity class has not been created yet, when logging in, it will just display
                     // failed or successful message.
+                    UserHandler.setVerifiedUser(username)
                     val intent = Intent(this, HomeActivity::class.java)
 
                     startActivity(intent)
