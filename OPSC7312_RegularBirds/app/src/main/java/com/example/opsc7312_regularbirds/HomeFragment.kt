@@ -343,8 +343,8 @@ class HomeFragment : Fragment(){
         }else {
             val bottomSheet = Popup_hotspotdetailsFragment()
             val y = BirdHotspots.getLocationByObsvId(value.toInt())
+            BirdHotspots.setSelectedHotspot(value.toInt())
             BirdHotspots.setDistentOriginLocation(y!!.lat,y!!.lng)
-
             bottomSheet.show(getChildFragmentManager(), "MyBottomSheet")
         }
         BirdHotspots.setUserOriginLocation(latitude,longitude)

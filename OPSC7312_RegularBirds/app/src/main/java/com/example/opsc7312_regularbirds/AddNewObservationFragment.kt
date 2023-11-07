@@ -53,7 +53,7 @@ class AddNewObservationFragment : Fragment() {
         var btnClear = view.findViewById<Button>(R.id.btnClear)
         val addPicbutton: Button = view.findViewById<Button>(R.id.btnAddPicture)
         imageView = view.findViewById(R.id.imgEntryImage)
-
+        initVars()
 
 
         mStorageRef = FirebaseStorage.getInstance().getReference("entryImages");
@@ -112,7 +112,7 @@ class AddNewObservationFragment : Fragment() {
                         val entryImage = entryImages(
                             uri.toString(),
                             UserHandler.getVerifiedUser()!!,
-                            BirdObservationHandler.generateEntryId()
+                            BirdObservationHandler.generateObservationId()
                         )
 
                         Log.d("Image  Url Download", uri.toString())
@@ -133,10 +133,7 @@ class AddNewObservationFragment : Fragment() {
                                         firestoreTask.exception?.message,
                                         Toast.LENGTH_SHORT
                                     ).show()
-
                                 }
-
-
                             }
                     }
                 } else {

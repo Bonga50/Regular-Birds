@@ -13,7 +13,7 @@ class entryImages {
             _userId = value
         }
 
-    var EntryId: Int
+    var EntryId: String
         get() = _EntryId
         set(value) {
             _EntryId = value
@@ -21,14 +21,14 @@ class entryImages {
 
     private var _ImageUrl: String = ""
     private var _userId: String = ""
-    private var _EntryId: Int = 0
+    private var _EntryId: String = ""
 
     constructor()
 
     constructor(
         ImageUrl: String,
         userId: String,
-        EntryId: Int
+        EntryId: String
     ) {
         this.ImageUrl = ImageUrl
         this.userId = userId
