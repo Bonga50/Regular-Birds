@@ -23,7 +23,7 @@ class BirdListFragment : Fragment(), RVadapter_Observations.OnItemClickListener 
     ): View? {
         // Inflate the layout for this fragment
         var view = inflater.inflate(R.layout.fragment_bird_list, container, false)
-        BirdObservationList= BirdObservationHandler.observations
+        BirdObservationList= BirdObservationHandler.userDataX
         recyclerView = view.findViewById(R.id.lvObservartions) // Initialize recyclerView
         recyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         recyclerViewAdapter = RVadapter_Observations(BirdObservationList)

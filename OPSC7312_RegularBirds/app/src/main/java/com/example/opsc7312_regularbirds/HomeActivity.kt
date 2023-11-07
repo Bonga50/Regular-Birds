@@ -3,8 +3,10 @@ package com.example.opsc7312_regularbirds
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.mapbox.android.core.permissions.PermissionsManager
+import kotlinx.coroutines.launch
 
 class HomeActivity : AppCompatActivity() {
     private lateinit var bottomNavigationView: BottomNavigationView
@@ -12,32 +14,34 @@ class HomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
+        lifecycleScope.launch {
+            BirdObservationHandler.getUserObservationsFromFireStore()
+            BirdObservationHandler.getImagesFromFireStore()
+            bottomNavigationView = findViewById(R.id.bottomNavigationView)
 
-        bottomNavigationView = findViewById(R.id.bottomNavigationView)
+            val firstFragment = HomeFragment()
+            val secondFragment = BirdListFragment()
+            val thirdFragment = SettingsFragment()
+            val forthFragment = AddNewObservationFragment()
+            val fifthFragment = AreaDetailsFragment()
+            //val thirdFragment=ThirdFragment()
+            setCurrentFragment(firstFragment)
 
-        val firstFragment = HomeFragment()
-        val secondFragment=BirdListFragment()
-        val thirdFragment=SettingsFragment()
-        val forthFragment=AddNewObservationFragment()
-        val fifthFragment=AreaDetailsFragment()
-        //val thirdFragment=ThirdFragment()
-        setCurrentFragment(firstFragment)
-
-        //Home page
-        bottomNavigationView.setOnItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.nav_home -> setCurrentFragment(firstFragment)
-                R.id.nav_Birds -> setCurrentFragment(secondFragment)
-                R.id.nav_Settings -> setCurrentFragment(thirdFragment)
-                R.id.nav_addNew -> setCurrentFragment(forthFragment)
-                R.id.nav_NearMe -> setCurrentFragment(fifthFragment)
+            //Home page
+            bottomNavigationView.setOnItemSelectedListener { item ->
+                when (item.itemId) {
+                    R.id.nav_home -> setCurrentFragment(firstFragment)
+                    R.id.nav_Birds -> setCurrentFragment(secondFragment)
+                    R.id.nav_Settings -> setCurrentFragment(thirdFragment)
+                    R.id.nav_addNew -> setCurrentFragment(forthFragment)
+                    R.id.nav_NearMe -> setCurrentFragment(fifthFragment)
+                }
+                true
             }
-            true
+
+            val modalBottomSheet = Popup_hotspotdetailsFragment()
+            //modalBottomSheet.show(supportFragmentManager, Popup_hotspotdetailsFragment.TAG)
         }
-
-        val modalBottomSheet = Popup_hotspotdetailsFragment()
-        //modalBottomSheet.show(supportFragmentManager, Popup_hotspotdetailsFragment.TAG)
-
     }
          fun setCurrentFragment(fragment: Fragment)=
         supportFragmentManager.beginTransaction().apply {
