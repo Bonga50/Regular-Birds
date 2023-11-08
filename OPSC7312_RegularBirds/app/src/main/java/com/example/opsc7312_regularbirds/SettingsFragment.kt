@@ -9,9 +9,11 @@ import android.view.ViewGroup
 import android.widget.RadioGroup
 import android.widget.SeekBar
 import android.widget.TextView
+
 import androidx.lifecycle.lifecycleScope
-import com.example.resecondsense_v01.Gamification
 import kotlinx.coroutines.launch
+import com.example.opsc7312_regularbirds.Gamification
+
 
 
 class SettingsFragment : Fragment() {
