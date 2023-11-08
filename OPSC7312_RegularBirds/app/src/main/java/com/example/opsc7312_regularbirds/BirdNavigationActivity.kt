@@ -14,6 +14,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.mapbox.api.directions.v5.models.RouteOptions
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
@@ -85,6 +86,7 @@ import com.mapbox.navigation.ui.maps.route.line.api.MapboxRouteLineApi
 import com.mapbox.navigation.ui.maps.route.line.api.MapboxRouteLineView
 import com.mapbox.navigation.ui.maps.route.line.model.MapboxRouteLineOptions
 import com.mapbox.navigation.ui.tripprogress.view.MapboxTripProgressView
+import kotlinx.coroutines.launch
 
 class BirdNavigationActivity : AppCompatActivity() {
     private lateinit var binding: ActivityBirdNavigationBinding
@@ -363,7 +365,9 @@ class BirdNavigationActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityBirdNavigationBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        lifecycleScope.launch {
+            UserHandler.getSettingsFromFirebse()
+        }
         // initialize Navigation Camera
         viewportDataSource = MapboxNavigationViewportDataSource(binding.mapView.getMapboxMap())
         navigationCamera = NavigationCamera(
@@ -455,7 +459,7 @@ class BirdNavigationActivity : AppCompatActivity() {
             // add long click listener that search for a route to the clicked destination
             val location = BirdHotspots.getDistenation()
             //Checking the unit od measurement
-            if (BirdHotspots.getUnitOfMeasurement().equals("Metric")) {
+            if (UserHandler.userSettingsDefault.UnitOfMeasurment.equals("Metric")) {
                 unitOfMeasurement = DirectionsCriteria.METRIC
             }else{
                 unitOfMeasurement = DirectionsCriteria.IMPERIAL

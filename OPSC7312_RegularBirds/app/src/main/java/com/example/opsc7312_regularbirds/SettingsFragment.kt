@@ -9,7 +9,9 @@ import android.view.ViewGroup
 import android.widget.RadioGroup
 import android.widget.SeekBar
 import android.widget.TextView
+import androidx.lifecycle.lifecycleScope
 import com.example.resecondsense_v01.Gamification
+import kotlinx.coroutines.launch
 
 
 class SettingsFragment : Fragment() {
@@ -26,9 +28,13 @@ class SettingsFragment : Fragment() {
         val lblTravelDist = view.findViewById<TextView>(R.id.lblSettingsMaxNumber)
         val radioGroup = view.findViewById<RadioGroup>(R.id.unitOfMeasurementRadioGroup)
         val btnGamification =view.findViewById<TextView>(R.id.lblGamification)
-        lblTravelDist.setText("10")
-        seekBar.setProgress(10,true)
-        radioGroup.check(R.id.radioOptionMetric)
+        lblTravelDist.setText(UserHandler.userSettingsDefault.Distance.toString())
+        seekBar.setProgress(UserHandler.userSettingsDefault.Distance,true)
+        if(UserHandler.userSettingsDefault.UnitOfMeasurment=="Metric"){
+            radioGroup.check(R.id.radioOptionMetric)
+        }else{
+            radioGroup.check(R.id.radioOptionImperial)
+        }
         //Setting for Max Distance
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
@@ -41,19 +47,30 @@ class SettingsFragment : Fragment() {
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
-               BirdHotspots.setMaxDistance(tempTravelDist)
+               UserHandler.updateDistanceInFirebase(tempTravelDist)
+                UserHandler.userSettingsDefault.Distance=tempTravelDist
+                lifecycleScope.launch {
+                    UserHandler.getSettingsFromFirebse()
+                }
             }
+
         })
 
         //setting for unit of measurement
         radioGroup.setOnCheckedChangeListener { group, checkedId ->
             when (checkedId) {
                 R.id.radioOptionImperial -> {
-                    BirdHotspots.setUnitOfMeasurement("Imperial")
+                    UserHandler.updateUnitOfMeasurmentInFirebase("Imperial")
+                    UserHandler.userSettingsDefault.UnitOfMeasurment="Imperial"
                 }
                 R.id.radioOptionMetric -> {
-                    BirdHotspots.setUnitOfMeasurement("Metric")
+                    UserHandler.updateUnitOfMeasurmentInFirebase("Metric")
+                    UserHandler.userSettingsDefault.UnitOfMeasurment="Metric"
                 }
+
+            }
+            lifecycleScope.launch {
+                UserHandler.getSettingsFromFirebse()
             }
         }
 

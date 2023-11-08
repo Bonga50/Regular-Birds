@@ -11,12 +11,18 @@ import kotlinx.coroutines.launch
 class HomeActivity : AppCompatActivity() {
     private lateinit var bottomNavigationView: BottomNavigationView
     lateinit var permissionManager: PermissionsManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
+        var tempUserSettings :settingsModel? = settingsModel("","",10)
         lifecycleScope.launch {
             BirdObservationHandler.getUserObservationsFromFireStore()
             BirdObservationHandler.getImagesFromFireStore()
+            tempUserSettings = UserHandler.getSettingsFromFirebse()
+            if (tempUserSettings == null){
+                UserHandler.addsettingstoFireBase( settingsModel(UserHandler.getVerifiedUser()!!,"Metric",10))
+            }
             bottomNavigationView = findViewById(R.id.bottomNavigationView)
 
             val firstFragment = HomeFragment()
