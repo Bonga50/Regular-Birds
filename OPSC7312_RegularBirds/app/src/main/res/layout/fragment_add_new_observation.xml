@@ -71,6 +71,7 @@
                 android:layout_alignParentBottom="true"
                 android:padding="10dp"
                 android:gravity="center">
+
                 <ImageView
                     android:id="@+id/imgEntryImage"
                     android:layout_width="100dp"
