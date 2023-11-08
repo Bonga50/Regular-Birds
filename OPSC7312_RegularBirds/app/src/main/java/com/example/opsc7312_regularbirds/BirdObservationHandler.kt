@@ -74,10 +74,10 @@ object BirdObservationHandler {
 
 
     //method that will add observations to the firebase
-    fun addDataCObservationToFirestore(dataCategory: BirdObservationModel) {
+    fun addDataCObservationToFirestore(observationValue: BirdObservationModel) {
         val db = Firebase.firestore
         db.collection("Observations")
-            .add(dataCategory)
+            .add(observationValue)
         }
 
     //method to get observations for firebase

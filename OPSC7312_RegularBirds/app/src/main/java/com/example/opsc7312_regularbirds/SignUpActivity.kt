@@ -47,7 +47,9 @@ class SignUpActivity : AppCompatActivity() {
                         if (it.isSuccessful) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(ContentValues.TAG, "createUserWithEmail:success")
+
                             val user = auth.currentUser
+                            UserHandler.addsettingstoFireBase(settingsModel(username,"Metric",10))
                             val intent = Intent(this, MainActivity::class.java)
                             startActivity(intent)
                         } else {

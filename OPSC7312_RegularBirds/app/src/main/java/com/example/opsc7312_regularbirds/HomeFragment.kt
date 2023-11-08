@@ -15,6 +15,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.example.opsc7312_regularbirds.BirdObservationHandler.observations
 import com.google.gson.Gson
 import com.google.gson.JsonElement
@@ -39,6 +40,8 @@ import com.mapbox.maps.plugin.locationcomponent.OnIndicatorBearingChangedListene
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorPositionChangedListener
 import com.mapbox.maps.plugin.locationcomponent.location
 import com.mapbox.maps.viewannotation.ViewAnnotationManager
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
@@ -129,7 +132,11 @@ class HomeFragment : Fragment(){
         var btnRecenter = view.findViewById<ImageView>(R.id.btnRecenter)
         latitude=0.0;
         longitude=0.0;
+        lifecycleScope.launch {
 
+            val job1 = async { UserHandler.getSettingsFromFirebse()}
+            job1.await()
+        }
         // Check for location permission
         if (ContextCompat.checkSelfPermission(
                 requireContext(),
@@ -192,7 +199,7 @@ class HomeFragment : Fragment(){
 
     fun hotspots(latitude: Double, longitude: Double) {
         BirdHotspots.clearLocations()
-        val radius = BirdHotspots.getMaxDistance()
+        val radius = UserHandler.userSettingsDefault.Distance
         hotspotsList = BirdObservationHandler.userDataX // Assuming this is a valid list of Locations
 
         BirdHotspots.resetIdCount()
