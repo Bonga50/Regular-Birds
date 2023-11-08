@@ -1,5 +1,6 @@
 package com.example.opsc7312_regularbirds
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -8,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.RadioGroup
 import android.widget.SeekBar
 import android.widget.TextView
+import com.example.resecondsense_v01.Gamification
 
 
 class SettingsFragment : Fragment() {
@@ -23,7 +25,7 @@ class SettingsFragment : Fragment() {
         val seekBar = view.findViewById<SeekBar>(R.id.sbMaxDistance)
         val lblTravelDist = view.findViewById<TextView>(R.id.lblSettingsMaxNumber)
         val radioGroup = view.findViewById<RadioGroup>(R.id.unitOfMeasurementRadioGroup)
-
+        val btnGamification =view.findViewById<TextView>(R.id.lblGamification)
         lblTravelDist.setText("10")
         seekBar.setProgress(10,true)
         radioGroup.check(R.id.radioOptionMetric)
@@ -55,8 +57,11 @@ class SettingsFragment : Fragment() {
             }
         }
 
-
-
+        //Gamification
+        btnGamification.setOnClickListener {
+            val intent = Intent(activity, Gamification::class.java)
+            startActivity(intent)
+        }
 
         return view
     }

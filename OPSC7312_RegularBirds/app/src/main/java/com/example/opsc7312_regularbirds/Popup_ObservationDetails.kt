@@ -2,6 +2,7 @@ package com.example.opsc7312_regularbirds
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,14 +15,14 @@ import com.squareup.picasso.Picasso
 import com.google.firebase.storage.FirebaseStorage
 
 class Popup_ObservationDetails: BottomSheetDialogFragment() {
-    lateinit var entryImages: entryImages
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         //declarations
-
+        var entryImages: entryImages?
         val view = inflater.inflate(R.layout.popup_observationdetails, container, false)
         var lblTitle = view.findViewById<TextView>(R.id.lblObservationTitle)
         var lblName = view.findViewById<TextView>(R.id.lblObservationBirdName)
@@ -43,7 +44,9 @@ class Popup_ObservationDetails: BottomSheetDialogFragment() {
 
 
         if ( tempSelectedObservation!!.imageData!="" ){
+            Log.d("Observation id ",tempSelectedObservation!!.toString())
             entryImages = BirdObservationHandler.getEntryImage(tempSelectedObservation!!.observationId)
+            if(entryImages == null){entryImages = entryImages("","","")}
         } else{
             entryImages = entryImages("","","")
         }

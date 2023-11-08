@@ -29,6 +29,7 @@ import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.StorageTask
 import com.google.firebase.storage.UploadTask
 import com.squareup.picasso.Picasso
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 class AddNewObservationFragment : Fragment() {
@@ -84,17 +85,27 @@ class AddNewObservationFragment : Fragment() {
                     imageData = imageUploadURL
 
                 )
-                    BirdObservationHandler.addDataCObservationToFirestore(
-                        newObserv
-                    )
+                BirdObservationHandler.addDataCObservationToFirestore(newObserv)
+
+
+                lifecycleScope.launch {
+
+                    val job1 = async { BirdObservationHandler.getUserObservationsFromFireStore() }
+                    val job2 = async { BirdObservationHandler.getImagesFromFireStore() }
+
+                    try {
+                        // Await the completion of all jobs
+                        job1.await()
+                        job2.await()
+                    } catch (e: Exception) {
+                        // Handle the exception
+                    }
+                }
 
             }
             // Show a toast message to indicate the data has been added
             Toast.makeText(requireContext(), "Data added successfully", Toast.LENGTH_SHORT).show()
-            lifecycleScope.launch {
-                BirdObservationHandler.getUserObservationsFromFireStore()
-                BirdObservationHandler.getImagesFromFireStore()
-            }
+
         }
 
         addPicbutton.setOnClickListener {
@@ -108,7 +119,6 @@ class AddNewObservationFragment : Fragment() {
 
 
      fun uploadImage() {
-
         mStorageRef = mStorageRef?.child(System.currentTimeMillis().toString())
         imgUri?.let {
             mStorageRef?.putFile(it)?.addOnCompleteListener { task ->

@@ -48,9 +48,9 @@ object BirdObservationHandler {
     }
 
     //function to get images
-    fun getEntryImage(entryId: String): entryImages {
-        var uplodedImage: entryImages = imageList.find { it.EntryId == entryId }!!
-        return uplodedImage
+    fun getEntryImage(entryId: String): entryImages? {
+        var uploadedImage: entryImages? = imageList.find { it.EntryId == entryId }
+        return uploadedImage
     }
 
     //this will get the selected obsevation

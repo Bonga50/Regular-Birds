@@ -80,5 +80,14 @@
         android:layout_margin="10dp"
         android:max="50" />
 
+    <TextView
+        android:id="@+id/lblGamification"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        android:text="Click me and see what happens"
+        android:textSize="18dp"
+        android:padding="20dp"/>
+
 
 </LinearLayout>
