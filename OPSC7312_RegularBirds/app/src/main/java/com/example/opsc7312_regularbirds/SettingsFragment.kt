@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import android.widget.RadioGroup
 import android.widget.SeekBar
 import android.widget.TextView
-import com.example.resecondsense_v01.Gamification
+import com.example.opsc7312_regularbirds.Gamification
 
 
 class SettingsFragment : Fragment() {
