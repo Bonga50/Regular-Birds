@@ -44,7 +44,7 @@ object BirdObservationHandler {
 
     //Method that creates an id based on the number of items in a list
     fun generateObservationId(): String {
-        return "Obsv"+(userDataX.size + 1)
+        return "Obsv"+(userDataX.size+1)
     }
 
     //function to get images

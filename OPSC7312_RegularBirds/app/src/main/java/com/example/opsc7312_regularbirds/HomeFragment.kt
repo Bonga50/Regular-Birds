@@ -60,7 +60,7 @@ class HomeFragment : Fragment(){
     var pointAnnotationManager: PointAnnotationManager?=null
     var userPointAnnotationManager: PointAnnotationManager?=null
     var location = mutableListOf<Locations>()
-    var hotspotsList = mutableListOf<BirdObservationModel>()
+    private lateinit var hotspotsList:List<BirdObservationModel>
     var latitude:Double=0.0;
     var longitude:Double=0.0;
     var bearing:Double=-1.0;
@@ -193,7 +193,7 @@ class HomeFragment : Fragment(){
     fun hotspots(latitude: Double, longitude: Double) {
         BirdHotspots.clearLocations()
         val radius = BirdHotspots.getMaxDistance()
-        hotspotsList = BirdObservationHandler.observations // Assuming this is a valid list of Locations
+        hotspotsList = BirdObservationHandler.userDataX // Assuming this is a valid list of Locations
 
         BirdHotspots.resetIdCount()
         hotspotInterface.getHotspots(apiKey,latitude, longitude, radius)
@@ -220,7 +220,7 @@ class HomeFragment : Fragment(){
 
     fun userHotspots() {
         //hotspotsList.clear() // Clear the existing hotspots
-        hotspotsList = BirdObservationHandler.observations // Assuming this is a valid list of Locations
+        hotspotsList = BirdObservationHandler.userDataX // Assuming this is a valid list of Locations
 
         if (isAdded) {
             //createMarkerUserObser()
