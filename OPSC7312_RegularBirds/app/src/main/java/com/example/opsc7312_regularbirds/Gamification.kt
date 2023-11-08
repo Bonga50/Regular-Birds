@@ -1,4 +1,4 @@
-package com.example.resecondsense_v01
+package com.example.opsc7312_regularbirds
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
