@@ -1,6 +1,7 @@
 package com.example.opsc7312_regularbirds
 
 import android.app.Activity.RESULT_OK
+import android.app.ProgressDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -70,6 +71,8 @@ class AddNewObservationFragment : Fragment() {
             imageView.setImageDrawable(null)
         }
         btnCreateObsrevation.setOnClickListener {
+
+
             if (txtBirdName != null) {
                 if (imgUri != null) {
                     uploadImage()
@@ -103,6 +106,7 @@ class AddNewObservationFragment : Fragment() {
                 }
 
             }
+
             // Show a toast message to indicate the data has been added
             Toast.makeText(requireContext(), "Data added successfully", Toast.LENGTH_SHORT).show()
 
@@ -119,6 +123,9 @@ class AddNewObservationFragment : Fragment() {
 
 
      fun uploadImage() {
+         val progressDialog = ProgressDialog(requireContext())
+         progressDialog.setTitle("Uploading...")
+         progressDialog.show()
         mStorageRef = mStorageRef?.child(System.currentTimeMillis().toString())
         imgUri?.let {
             mStorageRef?.putFile(it)?.addOnCompleteListener { task ->
@@ -152,11 +159,14 @@ class AddNewObservationFragment : Fragment() {
                                     ).show()
                                 }
                             }
+                        // Hide the loading spinner
+                        progressDialog.dismiss()
                     }
                 } else {
                     Toast.makeText(requireContext(), task.exception?.message, Toast.LENGTH_SHORT)
                         .show()
-
+                    // Hide the loading spinner
+                    progressDialog.dismiss()
                 }
             }
         }
