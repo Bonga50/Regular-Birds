@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:359541238437:android:257456d85705bc2edabb4c",
+        "mobilesdk_app_id": "1:359541238437:android:8c521ede2c29eed6dabb4c",
         "android_client_info": {
-          "package_name": "com.example.opsc7312_regularbirds"
+          "package_name": "com.iie.opsc7312_regularbirds"
         }
       },
       "oauth_client": [],
