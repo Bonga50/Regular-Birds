@@ -4,10 +4,12 @@ import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.TextView
 
 class RVadapter_Observations(var observationView: List<BirdObservationModel>) : RecyclerView.Adapter<RVadapter_Observations.ViewHolder>() {
     public var itemClickListener: OnItemClickListener? = null
+    public var itemLongClickListener: OnItemLongClickListener? = null
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -23,6 +25,11 @@ class RVadapter_Observations(var observationView: List<BirdObservationModel>) : 
         holder.itemView.setOnClickListener {
             val clickedItemId = currentItem.observationId
             itemClickListener?.OnItemClick(clickedItemId)
+        }
+        holder.itemView.setOnLongClickListener {
+            val clickedItemId = currentItem.observationId
+            itemLongClickListener?.OnItemLongClick(clickedItemId)
+            true
         }
         holder.titleView.text = currentItem.observationId.toString()+" ("+currentItem.observationName+") "
         holder.dateView.text = currentItem.observationDate
@@ -40,6 +47,10 @@ class RVadapter_Observations(var observationView: List<BirdObservationModel>) : 
     }
     interface OnItemClickListener {
         fun OnItemClick(itemId: String)
+    }
+
+    interface OnItemLongClickListener {
+        fun OnItemLongClick(itemId: String)
     }
     fun setFilteredList(mList: List<BirdObservationModel>){
         this.observationView = mList

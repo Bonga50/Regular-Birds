@@ -1,5 +1,6 @@
 package com.iie.opsc7312_regularbirds
 
+import android.app.AlertDialog
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -14,7 +15,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 
-class BirdListFragment : Fragment(), RVadapter_Observations.OnItemClickListener {
+class BirdListFragment : Fragment(), RVadapter_Observations.OnItemClickListener,RVadapter_Observations.OnItemLongClickListener {
     private lateinit var recyclerView: RecyclerView // Declare recyclerView as a class-level property
     private lateinit var recyclerViewAdapter: RVadapter_Observations
     private lateinit var BirdObservationList: List<BirdObservationModel> // Declare data as a class-level property
@@ -34,6 +35,7 @@ class BirdListFragment : Fragment(), RVadapter_Observations.OnItemClickListener 
         recyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         recyclerViewAdapter = RVadapter_Observations(BirdObservationList)
         recyclerViewAdapter.itemClickListener = this
+        recyclerViewAdapter.itemLongClickListener = this
 
         recyclerView.adapter = recyclerViewAdapter
 
@@ -82,6 +84,25 @@ class BirdListFragment : Fragment(), RVadapter_Observations.OnItemClickListener 
                 // Handle the exception
             }
         }
+        BirdObservationList= BirdObservationHandler.userDataX
+        recyclerViewAdapter = RVadapter_Observations(BirdObservationList)
+    }
+
+    override fun OnItemLongClick(itemId: String) {
+        //delete
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("Delete Observation")
+            .setMessage("Are you sure you want to delete this observation?")
+            .setPositiveButton("Yes") { dialog, which ->
+                lifecycleScope.launch {
+                    // Call your delete function here
+                    BirdObservationHandler.deleteUserObservationFromFireStore(itemId)
+                }
+            }
+            .setNegativeButton("No", null)
+            .show()
+
     }
 
 
