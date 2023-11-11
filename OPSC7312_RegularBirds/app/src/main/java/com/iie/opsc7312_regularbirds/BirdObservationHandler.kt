@@ -113,6 +113,24 @@ object BirdObservationHandler {
         return disticntUserData
     }
 
+    //delelte method
+    suspend fun deleteUserObservationFromFireStore(observationId: String) {
+        val db = Firebase.firestore
+
+        db.collection("Observations")
+            .whereEqualTo("userId", UserHandler.getVerifiedUser())
+            .whereEqualTo("observationId", observationId)
+            .get()
+            .addOnSuccessListener { documents ->
+                for (document in documents) {
+                    db.collection("Observations").document(document.id).delete()
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.w("Delete Error", "Error deleting document", e)
+            }
+    }
+
     //method that will get bird images from the firebase
     suspend fun getImagesFromFireStore(): List<entryImages> {
         val db = Firebase.firestore
