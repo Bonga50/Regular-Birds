@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.opsc7312_regularbirds'
+    namespace 'com.iie.opsc7312_regularbirds'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.example.opsc7312_regularbirds"
+        applicationId "com.iie.opsc7312_regularbirds"
         minSdk 24
         targetSdk 33
         versionCode 1
