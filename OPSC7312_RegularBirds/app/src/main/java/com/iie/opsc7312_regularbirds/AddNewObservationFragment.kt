@@ -1,6 +1,7 @@
 package com.iie.opsc7312_regularbirds
 
 import android.app.Activity.RESULT_OK
+import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.Intent
 import android.net.Uri
@@ -71,42 +72,53 @@ class AddNewObservationFragment : Fragment() {
         btnCreateObsrevation.setOnClickListener {
 
 
-            if (txtBirdName != null) {
-                if (imgUri != null) {
-                    uploadImage()
-                    imageUploadURL = "HasImage"
-                }
-                var newObserv = BirdObservationModel(
-                    observationId = id,
-                    observationName = "Observation " + txtBirdName.text.toString(),
-                    observationDate = LocalDate.now().toString(),
-                    userLocationLongitude = BirdHotspots.userLongitude,
-                    userLocationLatitude = BirdHotspots.userLatitude,
-                    UserId = UserHandler.getVerifiedUser()!!,
-                    imageData = imageUploadURL
-
-                )
-                BirdObservationHandler.addDataCObservationToFirestore(newObserv)
-
-
-                lifecycleScope.launch {
-
-                    val job1 = async { BirdObservationHandler.getUserObservationsFromFireStore() }
-                    val job2 = async { BirdObservationHandler.getImagesFromFireStore() }
-
-                    try {
-                        // Await the completion of all jobs
-                        job1.await()
-                        job2.await()
-                    } catch (e: Exception) {
-                        // Handle the exception
+            val builder = AlertDialog.Builder(requireContext())
+            builder.setTitle("User Location")
+                .setMessage("Do you want to save this observation? Your current location will be saved to.")
+            builder.setPositiveButton("OK") { dialog, which ->
+                if (txtBirdName != null) {
+                    if (imgUri != null) {
+                        uploadImage()
+                        imageUploadURL = "HasImage"
                     }
+                    var newObserv = BirdObservationModel(
+                        observationId = id,
+                        observationName = "Observation " + txtBirdName.text.toString(),
+                        observationDate = LocalDate.now().toString(),
+                        userLocationLongitude = BirdHotspots.userLongitude,
+                        userLocationLatitude = BirdHotspots.userLatitude,
+                        UserId = UserHandler.getVerifiedUser()!!,
+                        imageData = imageUploadURL
+
+                    )
+                    BirdObservationHandler.addDataCObservationToFirestore(newObserv)
+
+
+                    lifecycleScope.launch {
+
+                        val job1 =
+                            async { BirdObservationHandler.getUserObservationsFromFireStore() }
+                        val job2 = async { BirdObservationHandler.getImagesFromFireStore() }
+
+                        try {
+                            // Await the completion of all jobs
+                            job1.await()
+                            job2.await()
+                        } catch (e: Exception) {
+                            // Handle the exception
+                        }
+                    }
+
                 }
 
+                Toast.makeText(requireContext(), "Data added successfully", Toast.LENGTH_SHORT).show()
             }
+            builder.setNegativeButton("Cancel") { dialog, which ->
+                Toast.makeText(requireContext(), "Data Not Saved", Toast.LENGTH_SHORT).show()
+            }
+            val dialog = builder.create()
+            dialog.show()
 
-            // Show a toast message to indicate the data has been added
-            Toast.makeText(requireContext(), "Data added successfully", Toast.LENGTH_SHORT).show()
 
         }
 
